@@ -1,8 +1,10 @@
-body {
-    background-color: #222;
-    color: #fff;
-}
-
+/*
+ * General
+ */
+ 
+ div {
+ transition-delay: 0.5s;}
+ 
 code {
     background-color: #383838;
 }
@@ -12,26 +14,50 @@ code {
     background-color: #555;
 }
 
+/*
+ * Main layout
+ */
+
+body {
+    background-color: #222;
+    color: #fff;
+}
+
+#app {
+    padding-top: 1cm;
+    max-width: 960px;
+    margin: auto auto;
+}
+
+/*
+ * Rendering areas
+ */
+
 .render,
 select {
-    background-color: #333;
-    border: 1px solid #555;
     border-radius: 5px;
 }
 
-.hstack input {
-    vertical-align: middle;
+.render, select, .hstack input {
     background-color: #333;
     border: 1px solid #555;
-    margin-left: -5px;
-    margin-top: -1px;
-    height: 100%;
 }
 
 textarea.render,
 div.render {
     min-height: 3cm;
     padding: 0.5cm;
+}
+
+/*
+ * Horizontal stacks
+ */
+
+ .hstack input {
+    vertical-align: middle;
+    margin-left: -5px;
+    margin-top: -1px;
+    height: 100%;
 }
 
 .hstack {
@@ -53,4 +79,21 @@ div.render {
 .hstack :not(.last) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+}
+
+
+/*
+ * Cheat sheet
+ */
+
+#cheatsheet tbody tr td:nth-child(2) div {
+    padding: .3em .6em;
+    background-color: #383838;
+    font-family: monospace;
+    font-size: 0.9em;
+    border-radius: 4px;
+}
+
+#cheatsheet thead tr th {
+    background-color: #444;
 }

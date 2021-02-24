@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf8">
 	<title>MathJax Viewer</title>
@@ -12,100 +13,237 @@
 	});
 	</script>
 	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=default"></script>
-	<script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
-		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script>
+	<!--script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
+		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script-->
 	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+	<script defer src="app.js"></script>
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
 	<link rel="stylesheet" href="style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<script defer src="app.js"></script>
-
 </head>
-<body><body>
-	<div id="app" style="padding-top: 1cm;max-width:960px;margin: auto auto;">
-		<h1>MathJax Viewer</h1>
-		<div class="flex one two-800" id="Main">
-			<div>
-				<button v-on:click="render">Render</button>
-				<div class="hstack" v-on:click="autorender=!autorender">
-					<span class="button gray first">Auto-render
-					</span><span class="button last" v-bind:class="{'success':autorender, 'error':!autorender}">{{
-						autorender ? "On":"Off" }}</span>
-				</div>
-				<!--div class="hstack">
+
+<body>
+
+	<body>
+		<div id="app">
+			<h1>MathJax Viewer</h1>
+			<div class="flex one two-800" id="Main">
+				<div>
+					<button v-on:click="render">Render</button>
+					<div class="hstack" v-on:click="autorender=!autorender">
+						<span class="button gray first">Auto-render
+						</span><span class="button last" v-bind:class="{'success':autorender, 'error':!autorender}">{{
+							autorender ? "On":"Off" }}</span>
+					</div>
+					<!--div class="hstack">
 					<span class="button gray first">SVG
 					</span><button v-bind:disabled="!autorender" v-on:click="downloadSVG">⭳
 					</button><button class="last" disabled 
 						onclick="clipboard(event)">📋</button>
-				</div-->
+					</div-->
+				</div>
+				<div class="hstack">
+					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
+					</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
+						@change="updateTheme">
+						<optgroup label="Standard">
+							<option value="default">Default</option>
+							<option value="light">Light</option>
+							<option value="dark">Dark</option>
+							<option value="solar_light">Solarized Light</option>
+						</optgroup>
+						<optgroup label="Apps">
+							<option value="fb_messenger">Facebook Messenger (Light)</option>
+							<option value="discord">Discord (Dark)</option>
+							<option value="slack_dark">Slack (Dark)</option>
+						</optgroup>
+						<option value="custom">Custom</option>
+					</select>
+				</div>
 			</div>
-			<div class="hstack">
-				<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
-				</label><select id="themeSelect" class="last" style="width:70%" v-model="theme" @change="updateTheme">
-					<optgroup label="Standard">
-						<option value="default">Default</option>
-						<option value="light">Light</option>
-						<option value="dark">Dark</option>
-						<option value="solar_light">Solarized Light</option>
-					</optgroup>
-					<optgroup label="Apps">
-						<option value="fb_messenger">Facebook Messenger (Light)</option>
-						<option value="discord">Discord (Dark)</option>
-						<option value="slack_dark">Slack (Dark)</option>
-					</optgroup>
-					<option value="custom">Custom</option>
-				</select>
-			</div>
-		</div>
 
-		
-		<div class="flex one two-800" v-if="theme==='custom'">
-			<div class="hstack">
-				<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
-				</label>
-				<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%"/>
-			</div>
-			<div class="hstack">
-				<label class="button gray first render" style="width:30%" for="textColorInput">Text:
-				</label>
-				<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%"/>
-			</div>
-		</div>
 
-		<div class="flex one two-800" id="InputArea">
-			<div>
-				<textarea class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty"></textarea>
+			<div class="flex one two-800" v-if="theme==='custom'">
+				<div class="hstack">
+					<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
+					</label>
+					<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%" />
+				</div>
+				<div class="hstack">
+					<label class="button gray first render" style="width:30%" for="textColorInput">Text:
+					</label>
+					<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%" />
+				</div>
 			</div>
-			<div style="min-width: 50%; width: auto;">
-				<div id="putty" class="render" v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}" ></div>
-			</div>
-		</div>
-		<div class="flex one two-800" id="Footer">
-			<div>
-				<h3>Tips</h3>
-				<ul>
-					<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
-					<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.</li>
-				</ul>
-			</div>
-			<div>
-				<h3>Links</h3>
-				<ul>
-					<li><a target="blank_"
-							href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Symbols in LaTeX</a>
-					</li>
-					<li><a target="blank_" href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math
-							Main Functions</a></li>
-					<li><a target="blank_" href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
-						on WikiBooks.</li>
-					<li>This project on <a target="blank_" href="https://github.com/oskarr/mathjax-viewer/">GitHub</a>.</li>
-				</ul>
-			</div>
-		</div>
 
-		<footer style="height: 2cm"></footer>
-	</div>
-</body>
+
+			<div class="flex one two-800" id="InputArea">
+				<div>
+					<textarea class="render" placeholder="LaTeX" v-on:keyup="inputCallback"
+						v-model="inputty"></textarea>
+				</div>
+				<div style="min-width: 50%; width: auto;">
+					<div id="putty" class="render"
+						v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}"></div>
+				</div>
+			</div>
+
+
+			<div>
+				<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
+					<span class="button gray first">Cheat sheet
+					</span><span class="button last">{{
+						showCheatSheet ? "Hide":"Show" }}</span>
+				</div>
+				<br>
+				<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}" style="overflow:clip; transition: height 0.5s, opacity 0.5s;"><hr>
+				<table style="width:100%;" id="cheatsheet">
+					<thead>
+						<tr>
+							<th>Description</th>
+							<th>LaTeX</th>
+							<th>Result</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Basic operators</td>
+							<td>
+								<div>+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, x_z^y</div>
+							</td>
+							<td>$$+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, x_z^y$$</td>
+						</tr>
+						<tr>
+							<td>Comparisons</td>
+							<td>
+								<div>&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto, \neq
+								</div>
+							</td>
+							<td>$$&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto, \neq$$
+							</td>
+						</tr>
+						<tr>
+							<td>Integrals and sums</td>
+							<td>
+								<div>\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)</div>
+							</td>
+							<td>$$\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)$$</td>
+						</tr>
+						<tr>
+							<td>Derivatives and limits</td>
+							<td>
+								<div>\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(x)</div>
+							</td>
+							<td>$$\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}$$</td>
+						</tr>
+						<tr>
+							<td>Variables</td>
+							<td>
+								<div>\vec x, \mathbf x, \dot x, \ddot x, \hat \varphi, \bar \Delta, \varepsilon', \tilde
+									\vartheta \in \mathbb{R}^3</div>
+							</td>
+							<td>$$\vec x, \mathbf x, \dot x, \ddot x, \hat \varphi, \bar \Delta, \varepsilon', \tilde
+								\vartheta \in
+								\mathbb{R}^3$$</td>
+						</tr>
+						<tr>
+							<td>Misc. vector operators</td>
+							<td>
+								<div>x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) = \frac{\pi}{2}
+								</div>
+							</td>
+							<td>$$x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) = \frac{\pi}{2}$$
+							</td>
+						</tr>
+						<tr>
+							<td>Matrices</td>
+							<td>
+								<div>\det\begin<span>{</span>bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 5 &
+									\dotsb & 7 \end{bmatrix} \neq \left|\begin<span>{</span>matrix}1 & 2 \\ 3 &
+									4\end{matrix}\right|</div>
+							</td>
+							<td>$$\det\begin{bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 3 & \dotsb & 4
+								\end{bmatrix} \neq \left|\begin{matrix}1 & 2 \\ 3 & 4\end{matrix}\right|$$</td>
+						</tr>
+						<tr>
+							<td>Logic</td>
+							<td>
+								<div>\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in \emptyset
+									\subseteq A \: \forall A \land 1 = 2</div>
+							</td>
+							<td>$$\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in \emptyset
+								\subseteq A \: \forall A \land 1 = 2$$</td>
+						</tr>
+						<tr>
+							<td>Set operators</td>
+							<td>
+								<div>A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|</div>
+							</td>
+							<td>$$A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|$$</td>
+						</tr>
+						<tr>
+							<td>Alignment</td>
+							<td>
+								<div>\begin<span>{</span>align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}
+								</div>
+							</td>
+							<td>$$\begin{align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}$$</td>
+						</tr>
+						<tr>
+							<td>Text</td>
+							<td>
+								<div>\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}</div>
+							</td>
+							<td>$$\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}$$</td>
+						</tr>
+						<tr>
+							<td>Over and under</td>
+							<td>
+								<div>\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt
+									n}^{\text{> 0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}</div>
+							</td>
+							<td>$$\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt n}^{\text{>
+								0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}$$</td>
+						</tr>
+						<!--TODO add colors to cheat sheet-->
+					</tbody>
+				</table></div>
+			</div>
+			<hr>
+
+
+			<div class="flex one two-800" id="Footer" style="visibility:visible">
+				<div>
+					<h3>Tips</h3>
+					<ul>
+						<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
+						<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.
+						</li>
+					</ul>
+				</div>
+				<div>
+					<h3>Links</h3>
+					<ul>
+						<li><a target="blank_"
+								href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Symbols in
+								LaTeX</a>
+						</li>
+						<li><a target="blank_"
+								href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math
+								Main Functions</a></li>
+						<li><a target="blank_"
+								href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
+							on WikiBooks.</li>
+						<li>This project on <a target="blank_"
+								href="https://github.com/oskarr/mathjax-viewer/">GitHub</a>.</li>
+					</ul>
+				</div>
+			</div>
+
+			<footer style="height: 2cm"></footer>
+		</div>
+	</body>
+
 </html>

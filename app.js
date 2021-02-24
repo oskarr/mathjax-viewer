@@ -4,6 +4,8 @@ var app = new Vue({
         theme: "default",
         inputty: "",
         autorender: true,
+        
+        showCheatSheet: true,
 
         cBkgColor: "#333333",
         cTextColor: "#cccccc",
