@@ -1,80 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf8">
 	<title>MathJax Viewer</title>
 	<script type="text/x-mathjax-config">
 	MathJax.Hub.Config({
 	tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
 	"HTML-CSS": {
 	  linebreaks: { automatic: true, width: "container" }          
-	}              
+	}
 	});
 	</script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=default"></script>
+	<script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
+		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+	<link rel="stylesheet" href="style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<style type="text/css">.btn{margin-top: 7px; display:inline-block;}#inputty, #putty{min-height: 50px;}</style>
+
+	<script defer src="app.js"></script>
+
 </head>
-<body>
-	<div class="container">
-		<div class="page-header">
-			<h1>MathJax Viewer <small>Edit &amp; preview</small></h1>
-		</div>
-		<p>Type in an equation in \(LaTeX\) format and press the button (or press Enter). If your syntax is correct, it should show up accordingly on the right.</p>
-		<br>
-		<div id="gooby" class="row">
-			<div id="daffy" class="col-xs-6 col-md-6">
-				<input type="text" id="inputty" class="form-control" placeholder="LaTeX eq.">
-				<button id="butty" class="btn btn-primary pull-right">Go</button>
+<body><body>
+	<div id="app" style="padding-top: 1cm;max-width:960px;margin: auto auto;">
+		<h1>MathJax Viewer</h1>
+		<div class="flex one two-800" id="Main">
+			<div>
+				<button v-on:click="render">Render</button>
+				<div class="hstack" v-on:click="autorender=!autorender">
+					<span class="button gray first">Auto-render
+					</span><span class="button last" v-bind:class="{'success':autorender, 'error':!autorender}">{{
+						autorender ? "On":"Off" }}</span>
+				</div>
+				<!--div class="hstack">
+					<span class="button gray first">SVG
+					</span><button v-bind:disabled="!autorender" v-on:click="downloadSVG">⭳
+					</button><button class="last" disabled 
+						onclick="clipboard(event)">📋</button>
+				</div-->
 			</div>
-			<div class="col-xs-6 col-md-6">
-				<div id="putty"class="well"></div>
+			<div class="hstack">
+				<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
+				</label><select id="themeSelect" class="last" style="width:70%" v-model="theme" @change="updateTheme">
+					<optgroup label="Standard">
+						<option value="default">Default</option>
+						<option value="light">Light</option>
+						<option value="dark">Dark</option>
+						<option value="solar_light">Solarized Light</option>
+					</optgroup>
+					<optgroup label="Apps">
+						<option value="fb_messenger">Facebook Messenger (Light)</option>
+						<option value="discord">Discord (Dark)</option>
+						<option value="slack_dark">Slack (Dark)</option>
+					</optgroup>
+				</select>
 			</div>
 		</div>
-		<footer class="row">
-			<div class="col-xs-6 col-md-6">
-			<h3>Tips</h3>
+
+		<div class="flex one two-800" id="InputArea">
+			<div>
+				<textarea class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty"></textarea>
+			</div>
+			<div style="min-width: 50%; width: auto;">
+				<div id="putty" class="render" v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}" ></div>
+			</div>
+		</div>
+		<div class="flex one two-800" id="Footer">
+			<div>
+				<h3>Tips</h3>
 				<ul>
-				<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
-				<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.</li>
+					<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
+					<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.</li>
 				</ul>
 			</div>
-			<div class="col-xs-6 col-md-6">
-				<h3>Useful Links</h3>
+			<div>
+				<h3>Links</h3>
 				<ul>
-					<li><a target="blank_" href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Symbols in LaTeX</a></li>
-					<li><a target="blank_" href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math Main Functions</a></li>
-					<li>Contact <a href="mailto:sax@itesm.mx">me</a> if you have a comment or suggestion.</li>
+					<li><a target="blank_"
+							href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Symbols in LaTeX</a>
+					</li>
+					<li><a target="blank_" href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math
+							Main Functions</a></li>
+					<li><a target="blank_" href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
+						on WikiBooks.</li>
+					<li>Forked from <a href="https://github.com/saxarona">@saxarona</a>'s <a
+							href="https://github.com/saxarona/mathjax-viewer">mathjax-viewer</a>, MIT license.</li>
 				</ul>
 			</div>
+		</div>
 
-			<script type="text/javascript">
-			$(document).ready(function(){
-
-				doIt = function(){
-					$("#putty").html("\\[" + $("#inputty").val() + "\\]");
-					MathJax.Hub.Typeset();
-				}
-
-				$("#butty").click(doIt);
-
-				$("#inputty").keypress(function(e){
-					if (e.which == 13) {
-						doIt();
-						return false;
-					}});
-
-			});
-		</script>
-		</footer>
+		<footer style="height: 2cm"></footer>
 	</div>
 </body>
 </html>

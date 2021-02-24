@@ -1,2 +1,6 @@
 # mathjax-viewer
-Simple page to preview LaTeX equations and such.
+A page to view LaTeX equations. Forked from @saxarona's [mathjax-viewer](https://github.com/saxarona/mathjax-viewer), MIT license.
+
+## Additional features
+* Output themes
+* Automatic rendering

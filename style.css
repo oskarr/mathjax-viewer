@@ -1,0 +1,56 @@
+body {
+    background-color: #222;
+    color: #fff;
+}
+
+code {
+    background-color: #383838;
+}
+
+.button.gray {
+    color: #eee;
+    background-color: #555;
+}
+
+.render,
+select {
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 5px;
+}
+
+.hstack input {
+    vertical-align: middle;
+    background-color: #333;
+    border: 1px solid #555;
+    margin-left: -5px;
+    margin-top: -1px;
+    height: 100%;
+}
+
+textarea.render,
+div.render {
+    min-height: 3cm;
+    padding: 0.5cm;
+}
+
+.hstack {
+    display: inline-block
+}
+
+.hstack .button {
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.hstack .button:not(:first-child),
+.hstack :not(.first) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.hstack .button:not(:last-child),
+.hstack :not(.last) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
