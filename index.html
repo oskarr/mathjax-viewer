@@ -55,7 +55,22 @@
 						<option value="discord">Discord (Dark)</option>
 						<option value="slack_dark">Slack (Dark)</option>
 					</optgroup>
+					<option value="custom">Custom</option>
 				</select>
+			</div>
+		</div>
+
+		
+		<div class="flex one two-800" v-if="theme==='custom'">
+			<div class="hstack">
+				<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
+				</label>
+				<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%"/>
+			</div>
+			<div class="hstack">
+				<label class="button gray first render" style="width:30%" for="textColorInput">Text:
+				</label>
+				<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%"/>
 			</div>
 		</div>
 
@@ -85,8 +100,7 @@
 							Main Functions</a></li>
 					<li><a target="blank_" href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
 						on WikiBooks.</li>
-					<li>Forked from <a href="https://github.com/saxarona">@saxarona</a>'s <a
-							href="https://github.com/saxarona/mathjax-viewer">mathjax-viewer</a>, MIT license.</li>
+					<li>This project on <a target="blank_" href="https://github.com/oskarr/mathjax-viewer/">GitHub</a>.</li>
 				</ul>
 			</div>
 		</div>
