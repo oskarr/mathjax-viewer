@@ -9,7 +9,11 @@
 	tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
 	"HTML-CSS": {
 	  linebreaks: { automatic: true, width: "container" }          
-	}
+	},
+	"SVG": {
+		useFontCache: false,
+	},
+	//jax: ["input/TeX", "output/SVG"],
 	});
 	</script>
 	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=default"></script>
@@ -31,10 +35,10 @@
 			<h1>MathJax Viewer</h1>
 			<div class="flex one two-800" id="Main">
 				<div>
-					<button v-on:click="render">Render</button>
+					<button v-on:click="render" class="cyan">Render</button>
 					<div class="hstack" v-on:click="autorender=!autorender">
 						<span class="button gray first">Auto-render
-						</span><span class="button last" v-bind:class="{'success':autorender, 'error':!autorender}">{{
+						</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
 							autorender ? "On":"Off" }}</span>
 					</div>
 					<!--div class="hstack">
@@ -81,8 +85,7 @@
 
 			<div class="flex one two-800" id="InputArea">
 				<div>
-					<textarea class="render" placeholder="LaTeX" v-on:keyup="inputCallback"
-						v-model="inputty"></textarea>
+					<textarea autofocus class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty" id="inputty"></textarea>
 				</div>
 				<div style="min-width: 50%; width: auto;">
 					<div id="putty" class="render"
@@ -94,8 +97,16 @@
 			<div>
 				<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
 					<span class="button gray first">Cheat sheet
-					</span><span class="button last">{{
+					</span><span class="button cyan last">{{
 						showCheatSheet ? "Hide":"Show" }}</span>
+				</div>
+				<div class="hstack adder">
+					<span class="button gray first">Add
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}')">Fraction
+					</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}')">Matrix
+					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)')">Parentheses
+					</span><span class="button pink last" v-on:click="insertLaTeX('\\vec ')">Vector
+					</span>
 				</div>
 				<br>
 				<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}" style="overflow:clip; transition: height 0.5s, opacity 0.5s;"><hr>
@@ -184,6 +195,14 @@
 							<td>$$A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|$$</td>
 						</tr>
 						<tr>
+							<td>Cases</td>
+							<td>
+								<div>\begin<span>{</span>cases}x^2 & x \in \mathbb Q \\ -x^2 x \not \in \mathbb Q\end{cases}
+								</div>
+							</td>
+							<td>$$\begin{cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb Q\end{cases}$$</td>
+						</tr>
+						<tr>
 							<td>Alignment</td>
 							<td>
 								<div>\begin<span>{</span>align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}
@@ -219,8 +238,8 @@
 					<h3>Tips</h3>
 					<ul>
 						<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
-						<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.
-						</li>
+						<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.</li>
+						<li>Use <code>\\</code> to get a new line.</li>
 					</ul>
 				</div>
 				<div>
