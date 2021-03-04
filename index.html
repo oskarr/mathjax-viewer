@@ -102,11 +102,16 @@
 				</div>
 				<div class="hstack adder">
 					<span class="button gray first">Add
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}')">Fraction
-					</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}')">Matrix
-					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)')">Parentheses
-					</span><span class="button pink last" v-on:click="insertLaTeX('\\vec ')">Vector
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+					</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
+					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+					</span><span class="button pink" v-on:click="insertLaTeX('\\vec ')">x⃗
+					</span><span class="button pink" v-on:click="insertLaTeX('\\dot ')">ẋ
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
+					</span><span class="button pink last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
 					</span>
+
+					
 				</div>
 				<br>
 				<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}" style="overflow:clip; transition: height 0.5s, opacity 0.5s;"><hr>
@@ -122,9 +127,9 @@
 						<tr>
 							<td>Basic operators</td>
 							<td>
-								<div>+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, x_z^y</div>
+								<div>+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y</div>
 							</td>
-							<td>$$+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, x_z^y$$</td>
+							<td>$$+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y$$</td>
 						</tr>
 						<tr>
 							<td>Comparisons</td>
@@ -145,18 +150,18 @@
 						<tr>
 							<td>Derivatives and limits</td>
 							<td>
-								<div>\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(x)</div>
+								<div>\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}</div>
 							</td>
 							<td>$$\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}$$</td>
 						</tr>
 						<tr>
 							<td>Variables</td>
 							<td>
-								<div>\vec x, \mathbf x, \dot x, \ddot x, \hat \varphi, \bar \Delta, \varepsilon', \tilde
-									\vartheta \in \mathbb{R}^3</div>
+								<div>\vec x, \mathbf x, \dot x, \ddot x, \breve A, \hat \varphi, \bar \Delta, \varepsilon', \tilde
+									\vartheta, \check \jmath \in \mathbb{R}^3</div>
 							</td>
-							<td>$$\vec x, \mathbf x, \dot x, \ddot x, \hat \varphi, \bar \Delta, \varepsilon', \tilde
-								\vartheta \in
+							<td>$$\vec x, \mathbf x, \dot x, \ddot x, \breve A, \hat \varphi, \bar \Delta, \varepsilon', \tilde
+								\vartheta, \check \jmath \in
 								\mathbb{R}^3$$</td>
 						</tr>
 						<tr>
