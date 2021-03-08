@@ -35,18 +35,18 @@
 			<h1>MathJax Viewer</h1>
 			<div class="flex one two-800" id="Main">
 				<div>
-					<button v-on:click="render" class="cyan">Render</button>
-					<div class="hstack" v-on:click="autorender=!autorender">
-						<span class="button gray first">Auto-render
-						</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
-							autorender ? "On":"Off" }}</span>
+					<div class="hstack adder">
+						<span class="button gray first">Add
+						</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+						</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
+						</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+						</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
+						</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
+						</span><span class="button pink" v-on:click="insertLaTeX('\\vec ')">x⃗
+						</span><span class="button pink" v-on:click="insertLaTeX('\\dot ')">ẋ
+						</span><span class="button pink last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
+						</span>
 					</div>
-					<!--div class="hstack">
-					<span class="button gray first">SVG
-					</span><button v-bind:disabled="!autorender" v-on:click="downloadSVG">⭳
-					</button><button class="last" disabled 
-						onclick="clipboard(event)">📋</button>
-					</div-->
 				</div>
 				<div class="hstack">
 					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
@@ -95,25 +95,26 @@
 
 
 			<div>
-				<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
-					<span class="button gray first">Cheat sheet
-					</span><span class="button cyan last">{{
-						showCheatSheet ? "Hide":"Show" }}</span>
+				<div>
+					<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
+						<span class="button gray first">Cheat sheet
+						</span><span class="button cyan last">{{
+							showCheatSheet ? "Hide":"Show" }}</span>
+					</div>
+					<div class="hstack" v-on:click="autorender=!autorender">
+						<span class="button gray first">Auto-render
+						</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
+							autorender ? "On":"Off" }}</span>
+					</div>
+					<button v-on:click="render" class="navy">Render</button>
+					<button onclick="linkToClipboard(event)" class="navy">Copy link</button>
+					<!--div class="hstack">
+					<span class="button gray first">SVG
+					</span><button v-bind:disabled="!autorender" v-on:click="downloadSVG">⭳
+					</button><button class="last" disabled 
+						onclick="clipboard(event)">📋</button>
+					</div-->
 				</div>
-				<div class="hstack adder">
-					<span class="button gray first">Add
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-					</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
-					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-					</span><span class="button pink" v-on:click="insertLaTeX('\\vec ')">x⃗
-					</span><span class="button pink" v-on:click="insertLaTeX('\\dot ')">ẋ
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
-					</span><span class="button pink last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
-					</span>
-
-					
-				</div>
-				<br>
 				<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}" style="overflow:clip; transition: height 0.5s, opacity 0.5s;"><hr>
 				<table style="width:100%;" id="cheatsheet">
 					<thead>
@@ -231,7 +232,7 @@
 							<td>$$\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt n}^{\text{>
 								0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}$$</td>
 						</tr>
-						<!--TODO add colors to cheat sheet-->
+						<!--TODO add colors and binomials to cheat sheet-->
 					</tbody>
 				</table></div>
 			</div>

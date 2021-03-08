@@ -80,7 +80,11 @@ var app = new Vue({
             el.focus()
             var tarPos = selEnd + offset + text.length
             el.setSelectionRange(tarPos, tarPos)
-        },/*
+        },
+        getLink: function() {
+            return location.href.split("#!")[0] + "#!base64=" + encodeURI(btoa(this.inputty))
+        },
+        /*
         getSVG: function() {
             data = document.getElementById("putty").childNodes[1].firstChild.innerHTML
             head = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.2"'
@@ -108,3 +112,28 @@ clipboard = async function (event) {
     }
 }
 */
+
+linkToClipboard = async function (event) {
+    if (!navigator.clipboard) {
+        alert("Your browser is too old.")
+        return
+    }
+    try {
+        await navigator.clipboard.writeText([app.getLink()])
+    } catch (err) {
+        console.error('Failed to copy!', err)
+    }
+}
+
+document.body.onload = function() {
+    try {
+        if(location.href.includes("base64=")) {
+            var inputty_encoded = location.href.split("#!")[1].split("base64=")[1].split("&")[0]
+            var inputty_decoded = atob(decodeURI(inputty_encoded))
+            app.inputty = inputty_decoded
+            app.render()
+        }
+    } finally {
+
+    }
+}
