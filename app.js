@@ -53,6 +53,8 @@ var app = new Vue({
             MathJax.Hub.Typeset();
         },
         updateTheme: function() {
+            if(this.theme == "custom") {return}
+
             this.cTextColor = this.themes[this.theme].text;
             this.cBkgColor = this.themes[this.theme].bg;
             if("border" in this.themes[this.theme]) {
@@ -82,7 +84,9 @@ var app = new Vue({
             el.setSelectionRange(tarPos, tarPos)
         },
         getLink: function() {
-            return location.href.split("#!")[0] + "#!base64=" + encodeURI(btoa(this.inputty))
+            return location.href.split("#!")[0] +
+                "#!base64=" + encodeURI(btoa(this.inputty)) +
+                "&theme=" + (this.theme=="custom" ? (this.cTextColor+"-"+this.cBkgColor):this.theme)
         },
         /*
         getSVG: function() {
@@ -143,10 +147,14 @@ document.body.onload = function() {
             app.inputty = inputty_decoded
             app.render()
         }
-        console.log(theme)
         if(theme && app.themes.hasOwnProperty(theme)) {
             app.theme = theme
             app.updateTheme()
+        } else if(theme && theme[6]=="-") {
+            app.theme = "custom"
+            theme = theme.replace(/\#/g, "")
+            app.cTextColor = "#"+theme.substr(0,6)
+            app.cBkgColor = "#"+theme.substr(7,6)
         }
     } finally {
 
