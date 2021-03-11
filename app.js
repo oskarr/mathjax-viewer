@@ -113,6 +113,15 @@ clipboard = async function (event) {
 }
 */
 
+// TODO rename
+getQuery = function(key) {
+    if(location.href.includes("#!") && location.href.includes(key + "=")) {
+        return location.href.split("#!")[1].split(key + "=")[1].split("&")[0]
+    } else {
+        return false
+    }
+}
+
 linkToClipboard = async function (event) {
     if (!navigator.clipboard) {
         alert("Your browser is too old.")
@@ -127,11 +136,17 @@ linkToClipboard = async function (event) {
 
 document.body.onload = function() {
     try {
-        if(location.href.includes("base64=")) {
-            var inputty_encoded = location.href.split("#!")[1].split("base64=")[1].split("&")[0]
+        var inputty_encoded = getQuery("base64")
+        var theme = getQuery("theme")
+        if(inputty_encoded) {
             var inputty_decoded = atob(decodeURI(inputty_encoded))
             app.inputty = inputty_decoded
             app.render()
+        }
+        console.log(theme)
+        if(theme && app.themes.hasOwnProperty(theme)) {
+            app.theme = theme
+            app.updateTheme()
         }
     } finally {
 
