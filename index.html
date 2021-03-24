@@ -35,36 +35,34 @@
 			<h1>MathJax Viewer</h1>
 			<div class="flex one two-800" id="Main">
 				<div>
-					<div class="hstack adder">
-						<span class="button gray first">Add
-						</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-						</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
-						</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-						</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
-						</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
-						</span><span class="button pink" v-on:click="insertLaTeX('\\vec ')">x⃗
-						</span><span class="button pink" v-on:click="insertLaTeX('\\dot ')">ẋ
-						</span><span class="button pink last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
-						</span>
+					<div class="hstack" style="width:100%;">
+						<label class="button gray first render" style="width:30%" for="toolboxSelect">Toolbox:
+						</label><select id="toolboxSelect" class="last" style="width:70%" v-model="toolbox">
+							<option value="generic">Generic</option>
+							<option value="statistics">Statistics</option>
+							<option value="greek">Greek letters</option>
+						</select>
 					</div>
 				</div>
-				<div class="hstack">
-					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
-					</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
-						@change="updateTheme">
-						<optgroup label="Standard">
-							<option value="default">Default</option>
-							<option value="light">Light</option>
-							<option value="dark">Dark</option>
-							<option value="solar_light">Solarized Light</option>
-						</optgroup>
-						<optgroup label="Apps">
-							<option value="fb_messenger">Facebook Messenger (Light)</option>
-							<option value="discord">Discord (Dark)</option>
-							<option value="slack_dark">Slack (Dark)</option>
-						</optgroup>
-						<option value="custom">Custom</option>
-					</select>
+				<div>
+					<div class="hstack" style="width:100%;margin-bottom:3px;">
+						<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
+						</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
+							@change="updateTheme">
+							<optgroup label="Standard">
+								<option value="default">Default</option>
+								<option value="light">Light</option>
+								<option value="dark">Dark</option>
+								<option value="solar_light">Solarized Light</option>
+							</optgroup>
+							<optgroup label="Apps">
+								<option value="fb_messenger">Facebook Messenger (Light)</option>
+								<option value="discord">Discord (Dark)</option>
+								<option value="slack_dark">Slack (Dark)</option>
+							</optgroup>
+							<option value="custom">Custom</option>
+						</select>
+					</div>
 				</div>
 			</div>
 
@@ -82,6 +80,57 @@
 				</div>
 			</div>
 
+
+			<div class="flex one">
+				<div class="hstack adder" v-if="toolbox==='generic'">
+					<span class="button gray first">Add
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+					</span><span class="button pink" v-on:click="insertLaTeX('\\sqrt{x}', -1)">&Sqrt;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
+					</span><span class="button navy" v-on:click="insertLaTeX('\\vec ')">x⃗
+					</span><span class="button navy" v-on:click="insertLaTeX('\\dot ')">ẋ
+					</span><span class="button navy" v-on:click="insertLaTeX('\\mathbf ')"><b>x</b>
+					</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
+					</span><span class="button navy last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
+					</span>
+				</div>
+				<div class="hstack adder" v-if="toolbox==='statistics'">
+					<span class="button gray first">Add
+					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+					</span><span class="button pink" v-on:click="insertLaTeX('\\binom{𝔞}{𝔟}', -5)">(:)
+					</span><span class="button navy" v-on:click="insertLaTeX('\\cup ')">∪
+					</span><span class="button navy" v-on:click="insertLaTeX('\\cap ')">∩
+					</span><span class="button pink" v-on:click="insertLaTeX('\\sum_{k=1}^{n}')">∑
+					</span><span class="button navy last" v-on:click="insertLaTeX('^\\star ')"><sup>&Star;</sup>
+					</span>
+				</div>
+				<div class="hstack adder" v-if="toolbox==='greek'">
+					<span class="button gray first">Add
+					</span><span class="button pink" v-on:click="insertLaTeX('\\alpha ')">&alpha;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\beta ')">&beta;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\gamma ')">&gamma;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\Delta ')">&Delta;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\varepsilon ')">&epsilon;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\theta ')">&theta;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\lambda ')">&lambda;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\mu ')">&mu;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\pi ')">&pi;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\rho ')">&rho;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\varrho ')">&#1009;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\sigma ')">&sigma;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\Sigma ')">&Sigma;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\tau ')">&tau;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\varphi ')">&phi;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\chi ')">&chi;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\psi ')">&psi;
+					</span><span class="button pink" v-on:click="insertLaTeX('\\omega ')">&omega;
+					</span><span class="button pink last" v-on:click="insertLaTeX('\\Omega ')">&Omega;
+					</span>
+				</div>
+			</div>
 
 			<div class="flex one two-800" id="InputArea">
 				<div>
@@ -203,10 +252,17 @@
 						<tr>
 							<td>Cases</td>
 							<td>
-								<div>\begin<span>{</span>cases}x^2 & x \in \mathbb Q \\ -x^2 x \not \in \mathbb Q\end{cases}
+								<div>\begin<span>{</span>cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb Q\end{cases}
 								</div>
 							</td>
 							<td>$$\begin{cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb Q\end{cases}$$</td>
+						</tr>
+						<tr>
+							<td>Misc. set operators</td>
+							<td>
+								<div>\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star</div>
+							</td>
+							<td>$$\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star$$</td>
 						</tr>
 						<tr>
 							<td>Alignment</td>

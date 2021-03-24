@@ -2,6 +2,7 @@ var app = new Vue({
     el: "#app",
     data: {
         theme: "default",
+        toolbox: "generic",
         inputty: "",
         autorender: true,
         
@@ -86,7 +87,8 @@ var app = new Vue({
         getLink: function() {
             return location.href.split("#!")[0] +
                 "#!base64=" + encodeURI(btoa(this.inputty)) +
-                "&theme=" + (this.theme=="custom" ? (this.cTextColor+"-"+this.cBkgColor):this.theme)
+                "&theme=" + (this.theme=="custom" ? (this.cTextColor+"-"+this.cBkgColor):this.theme) +
+                "&toolbox=" + this.toolbox
         },
         /*
         getSVG: function() {
@@ -142,6 +144,7 @@ document.body.onload = function() {
     try {
         var inputty_encoded = getQuery("base64")
         var theme = getQuery("theme")
+        var toolbox = getQuery("toolbox")
         if(inputty_encoded) {
             var inputty_decoded = atob(decodeURI(inputty_encoded))
             app.inputty = inputty_decoded
@@ -155,6 +158,11 @@ document.body.onload = function() {
             theme = theme.replace(/\#/g, "")
             app.cTextColor = "#"+theme.substr(0,6)
             app.cBkgColor = "#"+theme.substr(7,6)
+        }
+
+        // TODO validate input
+        if(toolbox) {
+            app.toolbox = toolbox
         }
     } finally {
 
