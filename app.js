@@ -86,9 +86,9 @@ var app = new Vue({
         },
         getLink: function() {
             return location.href.split("#!")[0] +
-                "&theme=" + (this.theme=="custom" ? (this.cTextColor.replace("#","")+"-"+this.cBkgColor.replace("#","")):this.theme) +
+                "#!theme=" + (this.theme=="custom" ? (this.cTextColor.replace("#","")+"-"+this.cBkgColor.replace("#","")):this.theme) +
                 "&toolbox=" + this.toolbox +
-                "#!base64=" + encodeURI(btoa(this.inputty))
+                "&base64=" + encodeURI(btoa(this.inputty))
         },
         /*
         getSVG: function() {
