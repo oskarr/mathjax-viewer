@@ -90,17 +90,15 @@ var app = new Vue({
                 "&toolbox=" + this.toolbox +
                 "&base64=" + encodeURI(btoa(this.inputty))
         },
-        /*
-        getSVG: function() {
-            data = document.getElementById("putty").childNodes[1].firstChild.innerHTML
-            head = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.2"'
-            console.log(data)
-            data = head + data.substring(4).replace(/currentColor/g, "#000")
-            return data
+        getSVG: async function() {
+            const htmlElement = document.getElementsByClassName("MathJax_Display")[0]
+            var svgElement = await htmlToSvg(htmlElement)
+            svgElement.style = "background-color:" + this.cBkgColor;
+            return svgElement.outerHTML
         },
-        downloadSVG: function() {
-            download(this.getSVG(), "MathJax.svg", "image/svg+xml")
-        }, */
+        downloadSVG: async function() {
+            download(await this.getSVG(), "MathJax.svg", "image/svg+xml")
+        }, 
     },
 })
 

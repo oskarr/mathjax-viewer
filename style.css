@@ -1,7 +1,6 @@
 /*
  * General
  */
- 
 
 code {
     background-color: #383838;
@@ -55,6 +54,10 @@ div.render {
     min-height: 3cm;
     padding: 0.5cm;
 }
+
+/* MathJax Overrides. Needed for proper SVG exports.*/
+span.MathJax.MathJax_FullWidth {display: inline !important;}
+div.MathJax_Display {margin: 1em auto !important; width: min-content !important;}
 
 /*
  * Horizontal stacks
