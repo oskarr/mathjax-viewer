@@ -109,6 +109,6 @@ div.MathJax_Display, div.MathJax_SVG_Display {margin: 1em auto !important; width
     background-color: #444;
 }
 
-.hstack.adder span.button:not(:first-child) {
-    border-left: 1px solid #422;
+.hstack.adder span.button:not(:first-child), .hstack.adder button:not(:first-child) {
+    border-left: 1px solid #222;
 }

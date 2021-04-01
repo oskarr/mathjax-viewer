@@ -150,14 +150,15 @@
 					</span><span class="button cyan last">{{
 						showCheatSheet ? "Hide":"Show" }}</span>
 				</div>
-				<button onclick="linkToClipboard(event)" class="navy">Copy link</button>
-				<div class="hstack">
-					<span class="button gray first">SVG
-					</span><button v-on:click="downloadSVG" class="orange last">⭳
+				<div class="hstack adder">
+					<span class="button gray first">⭳
+					</span><button v-on:click="downloadSVG" class="navy">SVG
+					</button><button v-on:click="downloadPNG" class="navy last">PNG
 					</button>
 					<!--button class="last" disabled 
 						onclick="clipboard(event)">📋</button-->
 				</div>
+				<button onclick="linkToClipboard(event)" class="pink">Copy link</button>
 				<div class="hstack" v-on:click="autorender=!autorender">
 					<span class="button gray first">Auto-render
 					</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{

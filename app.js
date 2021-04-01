@@ -124,13 +124,14 @@ var app = new Vue({
         getSVG: function(element) {
             var data = element.childNodes[1].firstChild.innerHTML
             const head = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.2"'
-            console.log(data)
+            // console.log(data)
             // TODO, preferably we would use DOM for this.
             data = head + data.substring(4).replace(/currentColor/g, this.cTextColor).replace(/style="/, "style=\"background-color:"+this.cBkgColor+";")
             return data
         },
         downloadSVG: async function() {
             // TODO sleeping is a dirty fix to give MathJax time to set the renderer. This could probably be done more rigorously.
+            // This is also done for PNG.
             var oldJaxRenderer = this.getJaxRenderer()
             MathJax.Hub.setRenderer("SVG")
             await sleep(200)
@@ -142,6 +143,37 @@ var app = new Vue({
                 MathJax.Hub.setRenderer(oldJaxRenderer)
             });
         },
+        downloadPNG: async function() {
+            var oldJaxRenderer = this.getJaxRenderer()
+            MathJax.Hub.setRenderer("SVG")
+            await sleep(200)
+
+            var element = document.createElement("DIV")
+            element.innerHTML = "\\[" + this.inputty + "\\]";
+            MathJax.Hub.Typeset(element, function() {
+                MathJax.Hub.setRenderer(oldJaxRenderer)
+
+                // Get the aspect ratio
+                var root = element.childNodes[1].firstChild.firstChild,
+                    width = parseFloat(root.getAttribute("width").replace(/ex/,"")),
+                    height = parseFloat(root.getAttribute("height").replace(/ex/,"")),
+                    scale = 128;
+
+                // See https://stackoverflow.com/questions/5433806/convert-embedded-svg-to-png-in-place
+                var svgData = app.getSVG(element),
+                    can = document.createElement('canvas'),
+                    ctx = can.getContext("2d"),
+                    loader = new Image;
+                
+                loader.width = can.width = scale*width//TARGET. Needs to be computed.
+                loader.height = can.height = scale*height//TARGET. ----------=---------
+                loader.onload = function() {
+                    ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+                    download(can.toDataURL(), "MathJax.png", "image/png")
+                }
+                loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgData );
+            });
+        }
     },
 })
 
