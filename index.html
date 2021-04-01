@@ -35,18 +35,16 @@
 		<div class="flex one two-800" id="Main">
 			<div>
 				<div class="hstack" style="width:100%;">
-					<label class="button gray first render" style="width:30%" for="toolboxSelect">Toolbox:
-					</label><select id="toolboxSelect" class="last" style="width:70%" v-model="toolbox">
-						<option value="generic">Generic</option>
-						<option value="statistics">Statistics</option>
-						<option value="greek">Greek letters</option>
+					<label class="button gray render" style="width:30%" for="toolboxSelect">Toolbox:
+					</label><select id="toolboxSelect" style="width:70%" v-model="toolbox">
+						<option v-for="tbx, id in groupedtoolboxes" v-bind:value="id">{{ tbx.name }}</option>
 					</select>
 				</div>
 			</div>
 			<div>
 				<div class="hstack" style="width:100%;margin-bottom:3px;">
-					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
-					</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
+					<label class="button gray render" style="width:30%" for="themeSelect">Theme:
+					</label><select id="themeSelect" style="width:70%" v-model="theme"
 						@change="updateTheme">
 						<optgroup v-for="themes, groupname in groupedthemes" v-bind:label="groupname">
 							<option v-for="theme, key in themes" v-bind:value="key">{{ theme.name }}</option>
@@ -60,66 +58,22 @@
 
 		<div class="flex one two-800" v-if="theme==='custom'">
 			<div class="hstack">
-				<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
+				<label class="button gray render" style="width:30%" for="backgroundInput">Background:
 				</label>
-				<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%" />
+				<input type="color" v-model="cBkgColor" id="backgroundInput" style="width:70%" />
 			</div>
 			<div class="hstack">
-				<label class="button gray first render" style="width:30%" for="textColorInput">Text:
+				<label class="button gray render" style="width:30%" for="textColorInput">Text:
 				</label>
-				<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%" />
+				<input type="color" v-model="cTextColor" id="textColorInput" style="width:70%" />
 			</div>
 		</div>
 
 
 		<div class="flex one">
-			<div class="hstack adder" v-if="toolbox==='generic'">
-				<span class="button gray first">Add
-				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-				</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-				</span><span class="button pink" v-on:click="insertLaTeX('\\sqrt{}', -1)">&Sqrt;
-				</span><span class="button pink"
-					v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
-				</span><span class="button navy" v-on:click="insertLaTeX('\\vec ')">x⃗
-				</span><span class="button navy" v-on:click="insertLaTeX('\\dot ')">ẋ
-				</span><span class="button navy" v-on:click="insertLaTeX('\\mathbf ')"><b>x</b>
-				</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
-				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
-				</span><span class="button navy last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
-				</span>
-			</div>
-			<div class="hstack adder" v-if="toolbox==='statistics'">
-				<span class="button gray first">Add
-				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-				</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-				</span><span class="button pink" v-on:click="insertLaTeX('\\binom{𝔞}{𝔟}', -5)">(:)
-				</span><span class="button navy" v-on:click="insertLaTeX('\\cup ')">∪
-				</span><span class="button navy" v-on:click="insertLaTeX('\\cap ')">∩
-				</span><span class="button pink" v-on:click="insertLaTeX('\\sum_{k=1}^{n}')">∑
-				</span><span class="button navy last" v-on:click="insertLaTeX('^\\star ')"><sup>&Star;</sup>
-				</span>
-			</div>
-			<div class="hstack adder" v-if="toolbox==='greek'">
-				<span class="button gray first">Add
-				</span><span class="button pink" v-on:click="insertLaTeX('\\alpha ')">&alpha;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\beta ')">&beta;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\gamma ')">&gamma;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\Delta ')">&Delta;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\varepsilon ')">&epsilon;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\theta ')">&theta;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\lambda ')">&lambda;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\mu ')">&mu;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\pi ')">&pi;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\rho ')">&rho;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\varrho ')">&#1009;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\sigma ')">&sigma;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\Sigma ')">&Sigma;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\tau ')">&tau;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\varphi ')">&phi;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\chi ')">&chi;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\psi ')">&psi;
-				</span><span class="button pink" v-on:click="insertLaTeX('\\omega ')">&omega;
-				</span><span class="button pink last" v-on:click="insertLaTeX('\\Omega ')">&Omega;
+			<div class="hstack adder" v-for="tbx, id in groupedtoolboxes" v-if="toolbox===id">
+				<span class="button gray">Add
+				</span><span class="button" v-for="tool in tbx.items" v-on:click="insertLaTeX(tool.insertion, tool.offset)" v-bind:class="{pink: tool.color===1, navy: tool.color===2}">{{ tool.icon }}
 				</span>
 			</div>
 		</div>
@@ -138,22 +92,22 @@
 		<div>
 			<div>
 				<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
-					<span class="button gray first">Cheat sheet
-					</span><span class="button cyan last">{{
+					<span class="button gray">Cheat sheet
+					</span><span class="button cyan">{{
 						showCheatSheet ? "Hide":"Show" }}</span>
 				</div>
 				<div class="hstack adder">
-					<span class="button gray first">⭳
+					<span class="button gray">⭳
 					</span><button v-on:click="downloadSVG" class="navy">SVG
-					</button><button v-on:click="downloadPNG" class="navy last">PNG
+					</button><button v-on:click="downloadPNG" class="navy">PNG
 					</button>
-					<!--button class="last" disabled 
+					<!--button disabled 
 						onclick="clipboard(event)">📋</button-->
 				</div>
 				<button onclick="linkToClipboard(event)" class="pink">Copy link</button>
 				<div class="hstack" v-on:click="autorender=!autorender">
-					<span class="button gray first">Auto-render
-					</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
+					<span class="button gray">Auto-render
+					</span><span class="button" v-bind:class="{'green':autorender, 'red':!autorender}">{{
 						autorender ? "On":"Off" }}</span>
 				</div>
 				<button v-on:click="render" v-if="!autorender" class="navy">Render</button>

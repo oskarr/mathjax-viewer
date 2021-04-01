@@ -16,7 +16,9 @@ var app = new Vue({
         // Loaded separately
         // TODO avoid redundancy
         themes: {},
-        groupedthemes: {}
+        groupedthemes: {},
+        toolboxes: {},
+        groupedtoolboxes: {},
     },
     methods: {
         inputCallback: function(e) {
@@ -205,7 +207,7 @@ var httpRequest = new XMLHttpRequest();
     httpRequest.send(); 
 }
 
-// Has to be done before the body onload below because
+// Has to be done before the body onload below due to theme and toolbox loading
 fetchJSONFile("themes.json", function(groupedthemes) {
     for (var groupkey in groupedthemes) {
         for (var themekey in groupedthemes[groupkey]) {
@@ -213,6 +215,15 @@ fetchJSONFile("themes.json", function(groupedthemes) {
         }
     }
     app.groupedthemes = groupedthemes
+})
+
+fetchJSONFile("toolboxes.json", function(groupedtoolboxes) {
+    for (var groupkey in groupedtoolboxes) {
+        for (var toolboxkey in groupedtoolboxes[groupkey]) {
+            app.toolboxes[toolboxkey] = groupedtoolboxes[groupkey]["items"][toolboxkey]
+        }
+    }
+    app.groupedtoolboxes = groupedtoolboxes
 })
 
 document.body.onload = function() {

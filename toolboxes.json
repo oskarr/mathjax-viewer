@@ -1,0 +1,233 @@
+{
+    "generic": {
+        "name": "Generic",
+        "items": [
+            {
+                "insertion": "\\frac{𝔞}{𝔟}",
+                "offset": -5,
+                "icon": "÷",
+                "color": 1
+            },
+            {
+                "insertion": "\\left(  \\right)",
+                "offset": -8,
+                "icon": "(…)",
+                "color": 1
+            },
+            {
+                "insertion": "\\sqrt{}",
+                "offset": -1,
+                "icon": "√",
+                "color": 1
+            },
+            {
+                "insertion": "\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}",
+                "offset": -30,
+                "icon": "[⸬]",
+                "color": 1
+            },
+            {
+                "insertion": "\\vec ",
+                "offset": 0,
+                "icon": "x⃗",
+                "color": 2
+            },
+            {
+                "insertion": "\\dot ",
+                "offset": 0,
+                "icon": "ẋ",
+                "color": 2
+            },
+            {
+                "insertion": "\\mathbf ",
+                "offset": 0,
+                "icon": "𝐗",
+                "color": 2
+            },
+            {
+                "insertion": "\\int_{𝚊}^{𝚋}  \\mathrm{d}t",
+                "offset": -12,
+                "icon": "∫",
+                "color": 1
+            },
+            {
+                "insertion": "\\frac{\\partial}{\\partial x} ",
+                "offset": 0,
+                "icon": "∂/∂x",
+                "color": 1
+            },
+            {
+                "insertion": "\\mathbb{R}",
+                "offset": 0,
+                "icon": "ℝ",
+                "color": 2
+            }
+        ]
+    },
+    "statistics": {
+        "name": "Statistics",
+        "items": [
+            {
+                "insertion": "\\frac{𝔞}{𝔟}",
+                "offset": -5,
+                "icon": "÷",
+                "color": 1
+            },
+            {
+                "insertion": "\\left(  \\right)",
+                "offset": -8,
+                "icon": "(…)",
+                "color": 1
+            },
+            {
+                "insertion": "\\binom{𝔞}{𝔟}",
+                "offset": -5,
+                "icon": "(:)",
+                "color": 1
+            },
+            {
+                "insertion": "\\cup ",
+                "offset": 0,
+                "icon": "∪",
+                "color": 2
+            },
+            {
+                "insertion": "\\cap ",
+                "offset": 0,
+                "icon": "∩",
+                "color": 2
+            },
+            {
+                "insertion": "\\sum_{k=1}^{n}",
+                "offset": 0,
+                "icon": "∑",
+                "color": 1
+            },
+            {
+                "insertion": "^\\star ",
+                "offset": 0,
+                "icon": "٭",
+                "color": 1
+            }
+        ]
+    },
+    "greek": {
+        "name": "Greek letters",
+        "items": [
+            {
+                "insertion": "\\alpha",
+                "offset": 0,
+                "icon": "α",
+                "color": 1
+            },
+            {
+                "insertion": "\\beta",
+                "offset": 0,
+                "icon": "β",
+                "color": 1
+            },
+            {
+                "insertion": "\\gamma",
+                "offset": 0,
+                "icon": "γ",
+                "color": 1
+            },
+            {
+                "insertion": "\\Delta",
+                "offset": 0,
+                "icon": "Δ",
+                "color": 1
+            },
+            {
+                "insertion": "\\varepsilon",
+                "offset": 0,
+                "icon": "ε",
+                "color": 1
+            },
+            {
+                "insertion": "\\theta",
+                "offset": 0,
+                "icon": "θ",
+                "color": 1
+            },
+            {
+                "insertion": "\\lambda",
+                "offset": 0,
+                "icon": "λ",
+                "color": 1
+            },
+            {
+                "insertion": "\\mu",
+                "offset": 0,
+                "icon": "μ",
+                "color": 1
+            },
+            {
+                "insertion": "\\pi",
+                "offset": 0,
+                "icon": "π",
+                "color": 1
+            },
+            {
+                "insertion": "\\rho",
+                "offset": 0,
+                "icon": "ρ",
+                "color": 1
+            },
+            {
+                "insertion": "\\varrho",
+                "offset": 0,
+                "icon": "ϱ",
+                "color": 1
+            },
+            {
+                "insertion": "\\sigma",
+                "offset": 0,
+                "icon": "σ",
+                "color": 1
+            },
+            {
+                "insertion": "\\Sigma",
+                "offset": 0,
+                "icon": "Σ",
+                "color": 1
+            },
+            {
+                "insertion": "\\tau",
+                "offset": 0,
+                "icon": "τ",
+                "color": 1
+            },
+            {
+                "insertion": "\\varphi",
+                "offset": 0,
+                "icon": "φ",
+                "color": 1
+            },
+            {
+                "insertion": "\\chi",
+                "offset": 0,
+                "icon": "χ",
+                "color": 1
+            },
+            {
+                "insertion": "\\psi",
+                "offset": 0,
+                "icon": "ψ",
+                "color": 1
+            },
+            {
+                "insertion": "\\omega",
+                "offset": 0,
+                "icon": "ω",
+                "color": 1
+            },
+            {
+                "insertion": "\\Omega",
+                "offset": 0,
+                "icon": "Ω",
+                "color": 1
+            }
+        ]
+    }
+}

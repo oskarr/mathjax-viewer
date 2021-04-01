@@ -67,7 +67,7 @@ div.MathJax_Display, div.MathJax_SVG_Display {margin: 1em auto !important; width
  .hstack input {
     vertical-align: middle;
     margin-left: -5px;
-    margin-top: -1px;
+    margin-top: -2px;
     height: 100%;
 }
 
@@ -81,13 +81,13 @@ div.MathJax_Display, div.MathJax_SVG_Display {margin: 1em auto !important; width
 }
 
 .hstack .button:not(:first-child),
-.hstack :not(.first) {
+.hstack :not(.first):not(:first-child) {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
 
 .hstack .button:not(:last-child),
-.hstack :not(.last) {
+.hstack :not(.last):not(:last-child) {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
