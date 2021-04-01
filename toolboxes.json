@@ -41,7 +41,7 @@
             {
                 "insertion": "\\mathbf ",
                 "offset": 0,
-                "icon": "𝐗",
+                "icon": "𝐱",
                 "color": 2
             },
             {
@@ -60,6 +60,12 @@
                 "insertion": "\\mathbb{R}",
                 "offset": 0,
                 "icon": "ℝ",
+                "color": 2
+            },
+            {
+                "insertion": "\\Rightarrow ",
+                "offset": 0,
+                "icon": "⇒",
                 "color": 2
             }
         ]
