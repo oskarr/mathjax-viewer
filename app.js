@@ -17,7 +17,6 @@ var app = new Vue({
         // TODO avoid redundancy
         themes: {},
         groupedthemes: {},
-        toolboxes: {},
         groupedtoolboxes: {},
     },
     methods: {
@@ -218,11 +217,6 @@ fetchJSONFile("themes.json", function(groupedthemes) {
 })
 
 fetchJSONFile("toolboxes.json", function(groupedtoolboxes) {
-    for (var groupkey in groupedtoolboxes) {
-        for (var toolboxkey in groupedtoolboxes[groupkey]) {
-            app.toolboxes[toolboxkey] = groupedtoolboxes[groupkey]["items"][toolboxkey]
-        }
-    }
     app.groupedtoolboxes = groupedtoolboxes
 })
 

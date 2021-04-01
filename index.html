@@ -4,28 +4,38 @@
 <head>
 	<meta charset="utf8">
 	<title>MathJax Viewer</title>
+
+	<!-- Needs to be loaded before MathJax in order to make image exports work -->
 	<script type="text/x-mathjax-config">
-	MathJax.Hub.Config({
-	tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
-	"HTML-CSS": {
-	  linebreaks: { automatic: true, width: "container" }          
-	},
-	"SVG": {
-		useFontCache: false,
-	},
-	jax: ["input/TeX", "output/SVG"],
-	});
+		MathJax.Hub.Config({
+		tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
+		"HTML-CSS": {linebreaks: { automatic: true, width: "container" }          },
+		"SVG": {useFontCache: false,},
+		jax: ["input/TeX", "output/SVG"],
+		});
 	</script>
-	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=default"></script>
+
+	<!-- Asynchronous scripts -->
+	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=default"
+		integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
 	<script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
 		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script>
-	<script async src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+	<script async src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.js"
+		integrity="sha256-P8jY+MCe6X2cjNSmF4rQvZIanL5VwUUT4MBnOMncjRU=" crossorigin="anonymous"></script>
+
+	<!-- Synchronous scripts -->
+	<script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
+	integrity="sha256-KSlsysqp7TXtFo/FHjb1T9b425x3hrvzjMWaJyKbpcI=" crossorigin="anonymous"></script>
 	<script defer src="app.js"></script>
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+	<!-- Styles -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic" media="async" onload="this.media='all'">
 	<link rel="stylesheet" href="style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Preloads -->
+	<link rel="preload" href="themes.json">
+	<link rel="preload" href="toolboxes.json">
 
 </head>
 
@@ -44,8 +54,7 @@
 			<div>
 				<div class="hstack" style="width:100%;margin-bottom:3px;">
 					<label class="button gray render" style="width:30%" for="themeSelect">Theme:
-					</label><select id="themeSelect" style="width:70%" v-model="theme"
-						@change="updateTheme">
+					</label><select id="themeSelect" style="width:70%" v-model="theme" @change="updateTheme">
 						<optgroup v-for="themes, groupname in groupedthemes" v-bind:label="groupname">
 							<option v-for="theme, key in themes" v-bind:value="key">{{ theme.name }}</option>
 						</optgroup>
@@ -73,7 +82,9 @@
 		<div class="flex one">
 			<div class="hstack adder" v-for="tbx, id in groupedtoolboxes" v-if="toolbox===id">
 				<span class="button gray">Add
-				</span><span class="button" v-for="tool in tbx.items" v-on:click="insertLaTeX(tool.insertion, tool.offset)" v-bind:class="{pink: tool.color===1, navy: tool.color===2}">{{ tool.icon }}
+				</span><span class="button" v-for="tool in tbx.items"
+					v-on:click="insertLaTeX(tool.insertion, tool.offset)"
+					v-bind:class="{pink: tool.color===1, navy: tool.color===2}">{{ tool.icon }}
 				</span>
 			</div>
 		</div>
@@ -84,7 +95,8 @@
 					id="inputty"></textarea>
 			</div>
 			<div style="min-width: 50%; width: auto;">
-				<div id="putty" class="render" v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}"></div>
+				<div id="putty" class="render"
+					v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}"></div>
 			</div>
 		</div>
 
@@ -312,5 +324,4 @@
 		<footer style="height: 2cm"></footer>
 	</div>
 </body>
-
 </html>
