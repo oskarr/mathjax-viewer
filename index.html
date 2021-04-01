@@ -13,14 +13,13 @@
 	"SVG": {
 		useFontCache: false,
 	},
-	jax: ["input/TeX", "output/HTML-CSS"],
+	jax: ["input/TeX", "output/SVG"],
 	});
 	</script>
 	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=default"></script>
 	<script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
 		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script>
-	<!--TODO: Find a CDN for htmlsvg.-->
-	<script async src="https://htmlsvg.netlify.app/scripts/htmlsvg.min.js"></script>
+	<script async src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 	<script defer src="app.js"></script>
 
@@ -31,343 +30,340 @@
 </head>
 
 <body>
-
-	<body>
-		<div id="app">
-			<h1>MathJax Viewer</h1>
-			<div class="flex one two-800" id="Main">
-				<div>
-					<div class="hstack" style="width:100%;">
-						<label class="button gray first render" style="width:30%" for="toolboxSelect">Toolbox:
-						</label><select id="toolboxSelect" class="last" style="width:70%" v-model="toolbox">
-							<option value="generic">Generic</option>
-							<option value="statistics">Statistics</option>
-							<option value="greek">Greek letters</option>
-						</select>
-					</div>
-				</div>
-				<div>
-					<div class="hstack" style="width:100%;margin-bottom:3px;">
-						<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
-						</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
-							@change="updateTheme">
-							<optgroup label="Standard">
-								<option value="default">Default</option>
-								<option value="light">Light</option>
-								<option value="dark">Dark</option>
-								<option value="solar_light">Solarized Light</option>
-							</optgroup>
-							<optgroup label="Apps">
-								<option value="fb_messenger">Facebook Messenger (Light)</option>
-								<option value="discord">Discord (Dark)</option>
-								<option value="slack_dark">Slack (Dark)</option>
-							</optgroup>
-							<option value="custom">Custom</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-
-			<div class="flex one two-800" v-if="theme==='custom'">
-				<div class="hstack">
-					<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
-					</label>
-					<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%" />
-				</div>
-				<div class="hstack">
-					<label class="button gray first render" style="width:30%" for="textColorInput">Text:
-					</label>
-					<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%" />
-				</div>
-			</div>
-
-
-			<div class="flex one">
-				<div class="hstack adder" v-if="toolbox==='generic'">
-					<span class="button gray first">Add
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-					</span><span class="button pink" v-on:click="insertLaTeX('\\sqrt{}', -1)">&Sqrt;
-					</span><span class="button pink"
-						v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
-					</span><span class="button navy" v-on:click="insertLaTeX('\\vec ')">x⃗
-					</span><span class="button navy" v-on:click="insertLaTeX('\\dot ')">ẋ
-					</span><span class="button navy" v-on:click="insertLaTeX('\\mathbf ')"><b>x</b>
-					</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
-					</span><span class="button navy last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
-					</span>
-				</div>
-				<div class="hstack adder" v-if="toolbox==='statistics'">
-					<span class="button gray first">Add
-					</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
-					</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
-					</span><span class="button pink" v-on:click="insertLaTeX('\\binom{𝔞}{𝔟}', -5)">(:)
-					</span><span class="button navy" v-on:click="insertLaTeX('\\cup ')">∪
-					</span><span class="button navy" v-on:click="insertLaTeX('\\cap ')">∩
-					</span><span class="button pink" v-on:click="insertLaTeX('\\sum_{k=1}^{n}')">∑
-					</span><span class="button navy last" v-on:click="insertLaTeX('^\\star ')"><sup>&Star;</sup>
-					</span>
-				</div>
-				<div class="hstack adder" v-if="toolbox==='greek'">
-					<span class="button gray first">Add
-					</span><span class="button pink" v-on:click="insertLaTeX('\\alpha ')">&alpha;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\beta ')">&beta;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\gamma ')">&gamma;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\Delta ')">&Delta;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\varepsilon ')">&epsilon;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\theta ')">&theta;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\lambda ')">&lambda;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\mu ')">&mu;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\pi ')">&pi;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\rho ')">&rho;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\varrho ')">&#1009;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\sigma ')">&sigma;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\Sigma ')">&Sigma;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\tau ')">&tau;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\varphi ')">&phi;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\chi ')">&chi;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\psi ')">&psi;
-					</span><span class="button pink" v-on:click="insertLaTeX('\\omega ')">&omega;
-					</span><span class="button pink last" v-on:click="insertLaTeX('\\Omega ')">&Omega;
-					</span>
-				</div>
-			</div>
-
-			<div class="flex one two-800" id="InputArea">
-				<div>
-					<textarea autofocus class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty"
-						id="inputty"></textarea>
-				</div>
-				<div style="min-width: 50%; width: auto;">
-					<div id="putty" class="render"
-						v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}"></div>
-				</div>
-			</div>
-
-
+	<div id="app">
+		<h1>MathJax Viewer</h1>
+		<div class="flex one two-800" id="Main">
 			<div>
-				<div>
-					<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
-						<span class="button gray first">Cheat sheet
-						</span><span class="button cyan last">{{
-							showCheatSheet ? "Hide":"Show" }}</span>
-					</div>
-					<button onclick="linkToClipboard(event)" class="navy">Copy link</button>
-					<div class="hstack">
-						<span class="button gray first">SVG
-						</span><button v-on:click="downloadSVG" class="last navy">⭳
-						</button>
-						<!--button class="last" disabled 
-						onclick="clipboard(event)">📋</button-->
-					</div>
-					<div class="hstack" v-on:click="autorender=!autorender">
-						<span class="button gray first">Auto-render
-						</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
-							autorender ? "On":"Off" }}</span>
-					</div>
-					<button v-on:click="render" class="navy">Render</button>
+				<div class="hstack" style="width:100%;">
+					<label class="button gray first render" style="width:30%" for="toolboxSelect">Toolbox:
+					</label><select id="toolboxSelect" class="last" style="width:70%" v-model="toolbox">
+						<option value="generic">Generic</option>
+						<option value="statistics">Statistics</option>
+						<option value="greek">Greek letters</option>
+					</select>
 				</div>
-				<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}"
-					style="overflow:clip; transition: height 0.5s, opacity 0.5s;">
-					<hr>
-					<table style="width:100%;" id="cheatsheet">
-						<thead>
-							<tr>
-								<th>Description</th>
-								<th>LaTeX</th>
-								<th>Result</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Basic operators</td>
-								<td>
-									<div>+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y</div>
-								</td>
-								<td>$$+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y$$</td>
-							</tr>
-							<tr>
-								<td>Comparisons</td>
-								<td>
-									<div>&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto,
-										\neq
-									</div>
-								</td>
-								<td>$$&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto,
-									\neq$$
-								</td>
-							</tr>
-							<tr>
-								<td>Integrals and sums</td>
-								<td>
-									<div>\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)</div>
-								</td>
-								<td>$$\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)$$</td>
-							</tr>
-							<tr>
-								<td>Derivatives and limits</td>
-								<td>
-									<div>\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}</div>
-								</td>
-								<td>$$\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}$$</td>
-							</tr>
-							<tr>
-								<td>Variables</td>
-								<td>
-									<div>\vec x, \mathbf x, \dot \varepsilon, \ddot x, \breve A, \hat \varphi, \bar \Delta,
-										\ell ', \tilde
-										\vartheta, \check \jmath \in
-										\mathbb{R}^3</div>
-								</td>
-								<td>$$\vec x, \mathbf x, \dot \varepsilon, \ddot x, \breve A, \hat \varphi, \bar \Delta,
+			</div>
+			<div>
+				<div class="hstack" style="width:100%;margin-bottom:3px;">
+					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
+					</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
+						@change="updateTheme">
+						<optgroup label="Standard">
+							<option value="default">Default</option>
+							<option value="light">Light</option>
+							<option value="dark">Dark</option>
+							<option value="solar_light">Solarized Light</option>
+						</optgroup>
+						<optgroup label="Apps">
+							<option value="fb_messenger">Facebook Messenger (Light)</option>
+							<option value="discord">Discord (Dark)</option>
+							<option value="slack_dark">Slack (Dark)</option>
+						</optgroup>
+						<option value="custom">Custom</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="flex one two-800" v-if="theme==='custom'">
+			<div class="hstack">
+				<label class="button gray first render" style="width:30%" for="backgroundInput">Background:
+				</label>
+				<input type="color" class="last" v-model="cBkgColor" id="backgroundInput" style="width:70%" />
+			</div>
+			<div class="hstack">
+				<label class="button gray first render" style="width:30%" for="textColorInput">Text:
+				</label>
+				<input type="color" class="last" v-model="cTextColor" id="textColorInput" style="width:70%" />
+			</div>
+		</div>
+
+
+		<div class="flex one">
+			<div class="hstack adder" v-if="toolbox==='generic'">
+				<span class="button gray first">Add
+				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+				</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+				</span><span class="button pink" v-on:click="insertLaTeX('\\sqrt{}', -1)">&Sqrt;
+				</span><span class="button pink"
+					v-on:click="insertLaTeX('\\begin{bmatrix} 𝒶 & 𝒷 \\\\ 𝒸 & 𝒹 \\end{bmatrix}', -30)">[⸬]
+				</span><span class="button navy" v-on:click="insertLaTeX('\\vec ')">x⃗
+				</span><span class="button navy" v-on:click="insertLaTeX('\\dot ')">ẋ
+				</span><span class="button navy" v-on:click="insertLaTeX('\\mathbf ')"><b>x</b>
+				</span><span class="button pink" v-on:click="insertLaTeX('\\int_{𝚊}^{𝚋}  \\mathrm{d}t', -12)">∫
+				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{\\partial}{\\partial x} ')">∂/∂x
+				</span><span class="button navy last" v-on:click="insertLaTeX('\\mathbb{R}')">ℝ
+				</span>
+			</div>
+			<div class="hstack adder" v-if="toolbox==='statistics'">
+				<span class="button gray first">Add
+				</span><span class="button pink" v-on:click="insertLaTeX('\\frac{𝔞}{𝔟}', -5)">÷
+				</span><span class="button pink" v-on:click="insertLaTeX('\\left(  \\right)', -8)">(…)
+				</span><span class="button pink" v-on:click="insertLaTeX('\\binom{𝔞}{𝔟}', -5)">(:)
+				</span><span class="button navy" v-on:click="insertLaTeX('\\cup ')">∪
+				</span><span class="button navy" v-on:click="insertLaTeX('\\cap ')">∩
+				</span><span class="button pink" v-on:click="insertLaTeX('\\sum_{k=1}^{n}')">∑
+				</span><span class="button navy last" v-on:click="insertLaTeX('^\\star ')"><sup>&Star;</sup>
+				</span>
+			</div>
+			<div class="hstack adder" v-if="toolbox==='greek'">
+				<span class="button gray first">Add
+				</span><span class="button pink" v-on:click="insertLaTeX('\\alpha ')">&alpha;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\beta ')">&beta;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\gamma ')">&gamma;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\Delta ')">&Delta;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\varepsilon ')">&epsilon;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\theta ')">&theta;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\lambda ')">&lambda;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\mu ')">&mu;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\pi ')">&pi;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\rho ')">&rho;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\varrho ')">&#1009;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\sigma ')">&sigma;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\Sigma ')">&Sigma;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\tau ')">&tau;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\varphi ')">&phi;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\chi ')">&chi;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\psi ')">&psi;
+				</span><span class="button pink" v-on:click="insertLaTeX('\\omega ')">&omega;
+				</span><span class="button pink last" v-on:click="insertLaTeX('\\Omega ')">&Omega;
+				</span>
+			</div>
+		</div>
+
+		<div class="flex one two-800" id="InputArea">
+			<div>
+				<textarea autofocus class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty"
+					id="inputty"></textarea>
+			</div>
+			<div style="min-width: 50%; width: auto;">
+				<div id="putty" class="render" v-bind:style="{color:  cTextColor, backgroundColor: cBkgColor, border: cBorder}"></div>
+			</div>
+		</div>
+
+
+		<div>
+			<div>
+				<div class="hstack" v-on:click="showCheatSheet=!showCheatSheet">
+					<span class="button gray first">Cheat sheet
+					</span><span class="button cyan last">{{
+						showCheatSheet ? "Hide":"Show" }}</span>
+				</div>
+				<button onclick="linkToClipboard(event)" class="navy">Copy link</button>
+				<div class="hstack">
+					<span class="button gray first">SVG
+					</span><button v-on:click="downloadSVG" class="orange last">⭳
+					</button>
+					<!--button class="last" disabled 
+						onclick="clipboard(event)">📋</button-->
+				</div>
+				<div class="hstack" v-on:click="autorender=!autorender">
+					<span class="button gray first">Auto-render
+					</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
+						autorender ? "On":"Off" }}</span>
+				</div>
+				<button v-on:click="render" class="navy">Render</button>
+			</div>
+			<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}"
+				style="overflow:clip; transition: height 0.5s, opacity 0.5s;">
+				<hr>
+				<table style="width:100%;" id="cheatsheet">
+					<thead>
+						<tr>
+							<th>Description</th>
+							<th>LaTeX</th>
+							<th>Result</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Basic operators</td>
+							<td>
+								<div>+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y</div>
+							</td>
+							<td>$$+, -, \times, \cdot, \sqrt{x}, \frac{\sqrt[4]{y}}{z}, \pm, \div, x_z^y$$</td>
+						</tr>
+						<tr>
+							<td>Comparisons</td>
+							<td>
+								<div>&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto,
+									\neq
+								</div>
+							</td>
+							<td>$$&lt;, \leq, \geq, >, \approx, \equiv, \cong, \simeq, \sim, \not\sim, \propto,
+								\neq$$
+							</td>
+						</tr>
+						<tr>
+							<td>Integrals and sums</td>
+							<td>
+								<div>\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)</div>
+							</td>
+							<td>$$\int_{0}^{\infty} f(x) \mathrm{d}x \leq \sum_{k=0}^{\infty} f(kx)$$</td>
+						</tr>
+						<tr>
+							<td>Derivatives and limits</td>
+							<td>
+								<div>\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}</div>
+							</td>
+							<td>$$\frac{\partial}{\partial x} = \lim_{h \to 0} \frac{f(x+h)-f(x)}{h}$$</td>
+						</tr>
+						<tr>
+							<td>Variables</td>
+							<td>
+								<div>\vec x, \mathbf x, \dot \varepsilon, \ddot x, \breve A, \hat \varphi, \bar \Delta,
 									\ell ', \tilde
 									\vartheta, \check \jmath \in
-									\mathbb{R}^3$$</td>
-							</tr>
-							<tr>
-								<td>Misc. vector operators</td>
-								<td>
-									<div>x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) =
-										\frac{\pi}{2}
-									</div>
-								</td>
-								<td>$$x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) =
-									\frac{\pi}{2}$$
-								</td>
-							</tr>
-							<tr>
-								<td>Matrices</td>
-								<td>
-									<div>\det\begin<span>{</span>bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 5
-										&
-										\dotsb & 7 \end{bmatrix} \neq \left|\begin<span>{</span>matrix}1 & 2 \\ 3 &
-										4\end{matrix}\right|</div>
-								</td>
-								<td>$$\det\begin{bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 3 & \dotsb & 4
-									\end{bmatrix} \neq \left|\begin{matrix}1 & 2 \\ 3 & 4\end{matrix}\right|$$</td>
-							</tr>
-							<tr>
-								<td>Logic</td>
-								<td>
-									<div>\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in
-										\emptyset
-										\subseteq A \: \forall A \land 1 = 2</div>
-								</td>
-								<td>$$\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in
+									\mathbb{R}^3</div>
+							</td>
+							<td>$$\vec x, \mathbf x, \dot \varepsilon, \ddot x, \breve A, \hat \varphi, \bar \Delta,
+								\ell ', \tilde
+								\vartheta, \check \jmath \in
+								\mathbb{R}^3$$</td>
+						</tr>
+						<tr>
+							<td>Misc. vector operators</td>
+							<td>
+								<div>x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) =
+									\frac{\pi}{2}
+								</div>
+							</td>
+							<td>$$x \bot y \, \| \, 2 y \Rightarrow x \cdot y = 0 \iff \angle(x, y) =
+								\frac{\pi}{2}$$
+							</td>
+						</tr>
+						<tr>
+							<td>Matrices</td>
+							<td>
+								<div>\det\begin<span>{</span>bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 5
+									&
+									\dotsb & 7 \end{bmatrix} \neq \left|\begin<span>{</span>matrix}1 & 2 \\ 3 &
+									4\end{matrix}\right|</div>
+							</td>
+							<td>$$\det\begin{bmatrix}1 & \dotsb & 2 \\ \vdots & \ddots & \vdots \\ 3 & \dotsb & 4
+								\end{bmatrix} \neq \left|\begin{matrix}1 & 2 \\ 3 & 4\end{matrix}\right|$$</td>
+						</tr>
+						<tr>
+							<td>Logic</td>
+							<td>
+								<div>\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in
 									\emptyset
-									\subseteq A \: \forall A \land 1 = 2$$</td>
-							</tr>
-							<tr>
-								<td>Set operators</td>
-								<td>
-									<div>A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|</div>
-								</td>
-								<td>$$A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|$$</td>
-							</tr>
-							<tr>
-								<td>Cases</td>
-								<td>
-									<div>\begin<span>{</span>cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb
-										Q\end{cases}
-									</div>
-								</td>
-								<td>$$\begin{cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb Q\end{cases}$$
-								</td>
-							</tr>
-							<tr>
-								<td>Misc. set operators</td>
-								<td>
-									<div>\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star</div>
-								</td>
-								<td>$$\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star$$</td>
-							</tr>
-							<tr>
-								<td>Alignment</td>
-								<td>
-									<div>\begin<span>{</span>align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}
-									</div>
-								</td>
-								<td>$$\begin{align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}$$</td>
-							</tr>
-							<tr>
-								<td>Text</td>
-								<td>
-									<div>\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}</div>
-								</td>
-								<td>$$\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}$$</td>
-							</tr>
-							<tr>
-								<td>Over and under</td>
-								<td>
-									<div>\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt
-										n}^{\text{> 0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}
-									</div>
-								</td>
-								<td>$$\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt
-									n}^{\text{>
-									0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}$$</td>
-							</tr>
-							<!--TODO add colors and binomials to cheat sheet-->
-						</tbody>
-					</table>
-				</div>
+									\subseteq A \: \forall A \land 1 = 2</div>
+							</td>
+							<td>$$\exists ~ \varrho : \varrho \leq \nabla f \lor 1 = 1 \iff \varrho \not\in
+								\emptyset
+								\subseteq A \: \forall A \land 1 = 2$$</td>
+						</tr>
+						<tr>
+							<td>Set operators</td>
+							<td>
+								<div>A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|</div>
+							</td>
+							<td>$$A\in\{\} \not\Leftarrow A \cap B = \emptyset \iff |A+B| = |A \cup B|$$</td>
+						</tr>
+						<tr>
+							<td>Cases</td>
+							<td>
+								<div>\begin<span>{</span>cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb
+									Q\end{cases}
+								</div>
+							</td>
+							<td>$$\begin{cases}x^2 & x \in \mathbb Q \\ -x^2 & x \not \in \mathbb Q\end{cases}$$
+							</td>
+						</tr>
+						<tr>
+							<td>Misc. set operators</td>
+							<td>
+								<div>\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star</div>
+							</td>
+							<td>$$\bigcup_{k=1}^n A_k^\star = \left(\bigcap_{k=1}^n A_k\right)^\star$$</td>
+						</tr>
+						<tr>
+							<td>Alignment</td>
+							<td>
+								<div>\begin<span>{</span>align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}
+								</div>
+							</td>
+							<td>$$\begin{align}x^2 &= x \cdot x \\ &= (-x)(-x) = (-x^2) \end{align}$$</td>
+						</tr>
+						<tr>
+							<td>Text</td>
+							<td>
+								<div>\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}</div>
+							</td>
+							<td>$$\mathcal O \mathfrak F \mathscr C \text{, MathJax doesn't like åäö.}$$</td>
+						</tr>
+						<tr>
+							<td>Over and under</td>
+							<td>
+								<div>\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt
+									n}^{\text{> 0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}
+								</div>
+							</td>
+							<td>$$\overbrace{\prod_{\underset{\sqrt n \not \in \mathbb N}{n = 1}}^{12} \sqrt
+								n}^{\text{>
+								0}} = \underbrace{3647.6841\ldots}_{\text{Probably irrational}}$$</td>
+						</tr>
+						<!--TODO add colors and binomials to cheat sheet-->
+					</tbody>
+				</table>
 			</div>
-			<hr>
-
-
-			<div class="flex one two-800" id="Footer" style="visibility:visible">
-				<div>
-					<h3>Tips</h3>
-					<ul>
-						<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
-						<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.
-						</li>
-						<li>Use <code>\\</code> to get a new line.</li>
-					</ul>
-				</div>
-				<div>
-					<h3>Links</h3>
-					<ul>
-						<li>General
-							<ul>
-								<li><a target="blank_"
-										href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math
-										Main Functions</a></li>
-								<li><a target="blank_"
-										href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
-									on WikiBooks.</li>
-							</ul>
-						</li>
-						<li>OCR (handwriting recognition)
-							<ul>
-								<li><a target="blank_" href="http://detexify.kirelabs.org/classify.html">Detexify</a>
-									(symbols)</li>
-								<li><a target="blank_" href="https://webdemo.myscript.com/views/math/">MyScript</a>
-									(equations)
-								</li>
-							</ul>
-						</li>
-						<li>Symbols
-							<ul>
-								<li><a target="blank_"
-										href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Math
-										symbols in LaTeX</a>
-								</li>
-								<li><a target="blank_"
-										href="https://ftpmirror1.infania.net/mirror/CTAN/info/symbols/comprehensive/symbols-a4.pdf">The
-										Comprehensive LaTeX Symbol List</a></li>
-							</ul>
-						</li>
-						<li>This project on <a target="blank_"
-								href="https://github.com/oskarr/mathjax-viewer/">GitHub</a>.</li>
-					</ul>
-				</div>
-			</div>
-
-			<footer style="height: 2cm"></footer>
 		</div>
-	</body>
+		<hr>
+
+
+		<div class="flex one two-800" id="Footer" style="visibility:visible">
+			<div>
+				<h3>Tips</h3>
+				<ul>
+					<li>No need to add <code>\(</code> or <code>\)</code> at the start or end of your equation.</li>
+					<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.
+					</li>
+					<li>Use <code>\\</code> to get a new line.</li>
+				</ul>
+			</div>
+			<div>
+				<h3>Links</h3>
+				<ul>
+					<li>General
+						<ul>
+							<li><a target="blank_"
+									href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Commands">Math
+									Main Functions</a></li>
+							<li><a target="blank_"
+									href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
+								on WikiBooks.</li>
+						</ul>
+					</li>
+					<li>OCR (handwriting recognition)
+						<ul>
+							<li><a target="blank_" href="http://detexify.kirelabs.org/classify.html">Detexify</a>
+								(symbols)</li>
+							<li><a target="blank_" href="https://webdemo.myscript.com/views/math/">MyScript</a>
+								(equations)
+							</li>
+						</ul>
+					</li>
+					<li>Symbols
+						<ul>
+							<li><a target="blank_"
+									href="http://www.artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Math
+									symbols in LaTeX</a>
+							</li>
+							<li><a target="blank_"
+									href="https://ftpmirror1.infania.net/mirror/CTAN/info/symbols/comprehensive/symbols-a4.pdf">The
+									Comprehensive LaTeX Symbol List</a></li>
+						</ul>
+					</li>
+					<li>This project on <a target="blank_" href="https://github.com/oskarr/mathjax-viewer/">GitHub</a>.
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<footer style="height: 2cm"></footer>
+	</div>
+</body>
 
 </html>

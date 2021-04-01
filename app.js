@@ -7,6 +7,7 @@ var app = new Vue({
         autorender: true,
         
         showCheatSheet: false,
+        jaxRenderer: null,
 
         cTextColor: "#ffffff",
         cBkgColor: "#333333",
@@ -49,9 +50,10 @@ var app = new Vue({
             if (this.autorender || e.which == 13)
                 this.render()
         },
-        render: function(force = false) {
-            document.getElementById("putty").innerHTML = "\\[" + this.inputty + "\\]";
-            MathJax.Hub.Typeset();
+        render: function() {
+            var el = document.getElementById("putty")
+            el.innerHTML = "\\[" + this.inputty + "\\]";
+            MathJax.Hub.Typeset(el);
         },
         updateTheme: function() {
             if(this.theme == "custom") {return}
@@ -65,7 +67,7 @@ var app = new Vue({
         insertLaTeX: function(text, offset) {
             var offset = (typeof offset !== 'undefined') ?  offset : 0
             // will give the current postion of the cursor
-            el = document.getElementById("inputty")
+            var el = document.getElementById("inputty")
             // TODO, make things with nonzero offset insert things on both sides of the selected text.
             var selStart = el.selectionStart + 0;
             var selEnd = el.selectionEnd + 0;
@@ -90,15 +92,33 @@ var app = new Vue({
                 "&toolbox=" + this.toolbox +
                 "&base64=" + encodeURI(btoa(this.inputty))
         },
-        getSVG: async function() {
-            const htmlElement = document.getElementsByClassName("MathJax_Display")[0]
-            var svgElement = await htmlToSvg(htmlElement)
-            svgElement.style = "background-color:" + this.cBkgColor;
-            return svgElement.outerHTML
+        getJaxRenderer: function() {
+            if(Cookies.get("mjx.menu") != undefined && Cookies.get("mjx.menu").includes("renderer"))
+                return Cookies.get("mjx.menu").split("renderer:")[1].split("&;")[0]
+            else
+                return MathJax.Hub.config.jax[0].split("output/")[1]
+        },
+        getSVG: function(element) {
+            var data = element.childNodes[1].firstChild.innerHTML
+            const head = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.2"'
+            console.log(data)
+            // TODO, preferably we would use DOM for this.
+            data = head + data.substring(4).replace(/currentColor/g, this.cTextColor).replace(/style="/, "style=\"background-color:"+this.cBkgColor+";")
+            return data
         },
         downloadSVG: async function() {
-            download(await this.getSVG(), "MathJax.svg", "image/svg+xml")
-        }, 
+            // TODO sleeping is a dirty fix to give MathJax time to set the renderer. This could probably be done more rigorously.
+            var oldJaxRenderer = this.getJaxRenderer()
+            MathJax.Hub.setRenderer("SVG")
+            await sleep(200)
+
+            var element = document.createElement("DIV")
+            element.innerHTML = "\\[" + this.inputty + "\\]";
+            MathJax.Hub.Typeset(element, function() {
+                download(app.getSVG(element), "MathJax.svg", "image/svg+xml")
+                MathJax.Hub.setRenderer(oldJaxRenderer)
+            });
+        },
     },
 })
 
@@ -137,6 +157,11 @@ linkToClipboard = async function (event) {
         console.error('Failed to copy!', err)
     }
 }
+
+// Should be called with "await"
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
 
 document.body.onload = function() {
     try {
