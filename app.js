@@ -13,37 +13,10 @@ var app = new Vue({
         cBkgColor: "#333333",
         cBorder: "",
 
-        themes: {
-            default: {
-                text: "#ffffff",
-                bg: "#333333",
-            },
-            light: {
-                text: "#000000",
-                bg: "#ffffff",
-            },
-            dark: {
-                text: "#ffffff",
-                bg: "#000000",
-            },
-            discord: {
-                text: "#ffffff",
-                bg: "#36393F",
-                border: "unset",
-            },
-            fb_messenger: {
-                text: "#000000", 
-                bg: "#E4E6EB", //3E4042 for dark mode
-            },
-            solar_light: {
-                text: "#073642", //586e75
-                bg: "#fdf6e3",
-            },
-            slack_dark: {
-                text: "#ffffff",
-                bg: "#1a1d21",
-            },
-        }
+        // Loaded separately
+        // TODO avoid redundancy
+        themes: {},
+        groupedthemes: {}
     },
     methods: {
         inputCallback: function(e) {
@@ -217,6 +190,30 @@ linkToClipboard = async function (event) {
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
+
+function fetchJSONFile(path, callback) {
+var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4) {
+            if (httpRequest.status === 200) {
+                var data = JSON.parse(httpRequest.responseText);
+                if (callback) callback(data);
+            }
+        }
+    };
+    httpRequest.open('GET', path);
+    httpRequest.send(); 
+}
+
+// Has to be done before the body onload below because
+fetchJSONFile("themes.json", function(groupedthemes) {
+    for (var groupkey in groupedthemes) {
+        for (var themekey in groupedthemes[groupkey]) {
+            app.themes[themekey] = groupedthemes[groupkey][themekey]
+        }
+    }
+    app.groupedthemes = groupedthemes
+})
 
 document.body.onload = function() {
     try {

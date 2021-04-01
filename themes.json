@@ -1,0 +1,44 @@
+{
+    "Standard": {
+        "default": {
+            "name": "Default",
+            "text": "#ffffff",
+            "bg": "#333333"
+        },
+        "light": {
+            "name": "Light",
+            "text": "#000000",
+            "bg": "#ffffff"
+        },
+        "dark": {
+            "name": "Dark",
+            "text": "#ffffff",
+            "bg": "#000000"
+        },
+        "solar_light": {
+            "name": "Solarized Light",
+            "text": "#073642",
+            "bg": "#fdf6e3",
+            "bg_alternate": "#586e75"
+        }
+    },
+    "Apps": {
+        "discord": {
+            "name": "Discord (Dark)",
+            "text": "#ffffff",
+            "bg": "#36393F",
+            "border": "unset"
+        },
+        "fb_messenger": {
+            "name": "Facebook Messenger (Light)",
+            "text": "#000000",
+            "bg": "#E4E6EB",
+            "bg_alternate": "#3E4042"
+        },
+        "slack_dark": {
+            "name": "Slack (Dark)",
+            "text": "#ffffff",
+            "bg": "#1a1d21"
+        }
+    }
+}

@@ -48,16 +48,8 @@
 					<label class="button gray first render" style="width:30%" for="themeSelect">Theme:
 					</label><select id="themeSelect" class="last" style="width:70%" v-model="theme"
 						@change="updateTheme">
-						<optgroup label="Standard">
-							<option value="default">Default</option>
-							<option value="light">Light</option>
-							<option value="dark">Dark</option>
-							<option value="solar_light">Solarized Light</option>
-						</optgroup>
-						<optgroup label="Apps">
-							<option value="fb_messenger">Facebook Messenger (Light)</option>
-							<option value="discord">Discord (Dark)</option>
-							<option value="slack_dark">Slack (Dark)</option>
+						<optgroup v-for="themes, groupname in groupedthemes" v-bind:label="groupname">
+							<option v-for="theme, key in themes" v-bind:value="key">{{ theme.name }}</option>
 						</optgroup>
 						<option value="custom">Custom</option>
 					</select>
@@ -164,7 +156,7 @@
 					</span><span class="button last" v-bind:class="{'green':autorender, 'red':!autorender}">{{
 						autorender ? "On":"Off" }}</span>
 				</div>
-				<button v-on:click="render" class="navy">Render</button>
+				<button v-on:click="render" v-if="!autorender" class="navy">Render</button>
 			</div>
 			<div v-bind:style="{height: showCheatSheet ? '100%':'0', opacity: showCheatSheet ? '1':'0'}"
 				style="overflow:clip; transition: height 0.5s, opacity 0.5s;">
