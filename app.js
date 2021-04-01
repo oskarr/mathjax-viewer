@@ -87,10 +87,33 @@ var app = new Vue({
             el.setSelectionRange(tarPos, tarPos)
         },
         getLink: function() {
-            return location.href.split("#!")[0] +
-                "#!theme=" + (this.theme=="custom" ? (this.cTextColor.replace("#","")+"-"+this.cBkgColor.replace("#","")):this.theme) +
-                "&toolbox=" + this.toolbox +
-                "&base64=" + encodeURI(btoa(this.inputty))
+            // Compute data string
+            var data = ""
+            try {
+                data = 
+                "base64=" + encodeURI(btoa(this.inputty))
+            } catch (err) {
+                if (err instanceof DOMException) {
+                    try {
+                        var enc = new TextEncoder("utf-8");
+                        data = "b64_utf8=" + encodeURI(btoa(enc.encode(this.inputty)))
+                    } catch(error) {alert("Failed to copy: " + error)}
+                } else alert("Failed to copy: " + err)
+            }
+
+
+            // Compute theme string
+            var theme = ""
+            if(this.theme=="custom")
+                theme = "theme=" + (this.cTextColor.replace("#","")+"-"+this.cBkgColor.replace("#",""))
+            else if(this.theme != "default")
+                theme = "this.theme"
+
+            // Compute toolbox string
+            var toolbox = (this.toolbox == "generic") ? "":this.toolbox
+
+            return location.href.split("#!")[0] + "#!" + [theme, toolbox, data].filter(a => a != "").join("&")
+            
         },
         getJaxRenderer: function() {
             if(Cookies.get("mjx.menu") != undefined && Cookies.get("mjx.menu").includes("renderer"))
@@ -165,11 +188,18 @@ const sleep = (milliseconds) => {
 
 document.body.onload = function() {
     try {
-        var inputty_encoded = getQuery("base64")
+        var inputty_b64_encoded = getQuery("base64")
+        var inputty_utf8_encoded = getQuery("b64_utf8")
         var theme = getQuery("theme")
         var toolbox = getQuery("toolbox")
-        if(inputty_encoded) {
-            var inputty_decoded = atob(decodeURI(inputty_encoded))
+        if(inputty_b64_encoded) {
+            var inputty_decoded = atob(decodeURI(inputty_b64_encoded))
+            app.inputty = inputty_decoded
+            app.render()
+        } else if(inputty_utf8_encoded) {
+            var dec = new TextDecoder("utf-8")
+            var buffer = new Uint8Array(atob(decodeURI(inputty_utf8_encoded)).split(",").map(parseFloat))
+            var inputty_decoded = dec.decode(buffer)
             app.inputty = inputty_decoded
             app.render()
         }
