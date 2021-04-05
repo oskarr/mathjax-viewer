@@ -5,9 +5,11 @@ var app = new Vue({
         toolbox: "generic",
         inputty: "",
         autorender: true,
+        dlformat: "png",
         
         showCheatSheet: false,
         jaxRenderer: null,
+        mathInput: "TeX",
 
         cTextColor: "#ffffff",
         cBkgColor: "#333333",
@@ -26,7 +28,7 @@ var app = new Vue({
         },
         render: function() {
             var el = document.getElementById("putty")
-            el.innerHTML = "\\[" + this.inputty + "\\]";
+            el.innerHTML = this.getPrerender()
             MathJax.Hub.Typeset(el);
         },
         updateTheme: function() {
@@ -38,8 +40,28 @@ var app = new Vue({
                 this.cBorder = this.themes[this.theme].border;
             } else {this.cBorder = "";}
         },
-        insertLaTeX: function(text, offset) {
-            var offset = (typeof offset !== 'undefined') ?  offset : 0
+        updateInputMethod: function() {
+            this.render()
+        },
+        insertMath: function(tool) {
+            var text, offset;
+
+            switch (this.mathInput) {
+                case "AsciiMath":
+                    text = (tool.hasOwnProperty("ascii")) ? tool.ascii:tool.latex;
+                    break;
+                default:
+                    text = tool.latex;
+                    break;
+            }
+            switch (this.mathInput) {
+                case "AsciiMath":
+                    offset = (tool.hasOwnProperty("asciiOffset")) ? tool.asciiOffset:((tool.hasOwnProperty("latexOffset")) ? tool.latexOffset:0);
+                    break;
+                default:
+                    offset = (tool.hasOwnProperty("latexOffset")) ? tool.latexOffset:0;
+                    break;
+            }
             // will give the current postion of the cursor
             var el = document.getElementById("inputty")
             // TODO, make things with nonzero offset insert things on both sides of the selected text.
@@ -84,10 +106,20 @@ var app = new Vue({
                 theme = "this.theme"
 
             // Compute toolbox string
-            var toolbox = (this.toolbox == "generic") ? "":this.toolbox
+            var toolbox = (this.toolbox == "generic") ? "":"toolbox=" + this.toolbox
+            var inputMode = (this.mathInput == "TeX") ? "":"inputmode=" + this.mathInput
 
-            return location.href.split("#!")[0] + "#!" + [theme, toolbox, data].filter(a => a != "").join("&")
+            return location.href.split("#!")[0] + "#!" + [theme, toolbox, inputMode, data].filter(a => a != "").join("&")
             
+        },
+        //
+        // Download utilities
+        //
+        getPrerender: function() {
+            if(this.mathInput == "AsciiMath")
+                return "`" + this.inputty + "`";
+            else
+                return "\\[" + this.inputty + "\\]";
         },
         getJaxRenderer: function() {
             if(Cookies.get("mjx.menu") != undefined && Cookies.get("mjx.menu").includes("renderer"))
@@ -96,14 +128,14 @@ var app = new Vue({
                 return MathJax.Hub.config.jax[0].split("output/")[1]
         },
         getSVG: function(element) {
-            var data = element.childNodes[1].firstChild.innerHTML
+            var root = element.childNodes[1].firstChild
+            var data = (root.nodeName == "svg") ? root.outerHTML : root.innerHTML;
             const head = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" version="1.2"'
-            // console.log(data)
             // TODO, preferably we would use DOM for this.
             data = head + data.substring(4).replace(/currentColor/g, this.cTextColor).replace(/style="/, "style=\"background-color:"+this.cBkgColor+";")
             return data
         },
-        downloadSVG: async function() {
+        renderSVG: async function(callback) {
             // TODO sleeping is a dirty fix to give MathJax time to set the renderer. This could probably be done more rigorously.
             // This is also done for PNG.
             var oldJaxRenderer = this.getJaxRenderer()
@@ -111,25 +143,27 @@ var app = new Vue({
             await sleep(200)
 
             var element = document.createElement("DIV")
-            element.innerHTML = "\\[" + this.inputty + "\\]";
+            element.innerHTML = this.getPrerender();
             MathJax.Hub.Typeset(element, function() {
-                download(app.getSVG(element), "MathJax.svg", "image/svg+xml")
                 MathJax.Hub.setRenderer(oldJaxRenderer)
+                callback(app.getSVG(element))
             });
         },
-        downloadPNG: async function() {
+        renderPNG: async function(callback) {
             var oldJaxRenderer = this.getJaxRenderer()
             MathJax.Hub.setRenderer("SVG")
             await sleep(200)
 
             var element = document.createElement("DIV")
-            element.innerHTML = "\\[" + this.inputty + "\\]";
+            element.innerHTML = this.getPrerender();
             MathJax.Hub.Typeset(element, function() {
                 MathJax.Hub.setRenderer(oldJaxRenderer)
 
                 // Get the aspect ratio
-                var root = element.childNodes[1].firstChild.firstChild,
-                    width = parseFloat(root.getAttribute("width").replace(/ex/,"")),
+                var root = element.childNodes[1].firstChild
+                root = (root.nodeName == "svg") ? root:root.firstChild;
+
+                var width = parseFloat(root.getAttribute("width").replace(/ex/,"")),
                     height = parseFloat(root.getAttribute("height").replace(/ex/,"")),
                     scale = 128;
 
@@ -143,23 +177,27 @@ var app = new Vue({
                 loader.height = can.height = scale*height//TARGET. ----------=---------
                 loader.onload = function() {
                     ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-                    download(can.toDataURL(), "MathJax.png", "image/png")
+                    callback(can.toDataURL())
                 }
                 loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgData );
-            });
-        }
+            })
+        },
     },
 })
 
 /*
-clipboard = async function (event) {
+async function clipboardPNG(evt) {
     console.log("EVENT")
+    //app.renderPNG(function(data) {window.open(data)})
+    app.renderPNG(dataToClipboard)
+}
+async function dataToClipboard(data) {
     if (!navigator.clipboard) {
         alert("Your browser is too old.")
         return
     }
     try {
-        await navigator.clipboard.writeText([app.getSVG()])
+        await navigator.clipboard.writeText(data)
     } catch (err) {
         console.error('Failed to copy!', err)
     }
@@ -226,6 +264,7 @@ document.body.onload = function() {
         var inputty_utf8_encoded = getQuery("b64_utf8")
         var theme = getQuery("theme")
         var toolbox = getQuery("toolbox")
+        var inputMode = getQuery("inputmode")
         if(inputty_b64_encoded) {
             var inputty_decoded = atob(decodeURI(inputty_b64_encoded))
             app.inputty = inputty_decoded
@@ -248,8 +287,11 @@ document.body.onload = function() {
         }
 
         // TODO validate input
-        if(toolbox) {
+        if(toolbox)
             app.toolbox = toolbox
+        if(inputMode) {
+            app.mathInput = inputMode
+            app.render()
         }
     } finally {
 

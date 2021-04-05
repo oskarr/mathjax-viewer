@@ -11,17 +11,20 @@
 		tex2jax: { inlineMath: [["$","$"],["\\(","\\)"]] },
 		"HTML-CSS": {linebreaks: { automatic: true, width: "container" }          },
 		"SVG": {useFontCache: false,},
-		jax: ["input/TeX", "output/SVG"],
+
+		// Engines to initialize at startup
+		jax: ["input/TeX", "input/AsciiMath", "output/HTML-CSS", "output/SVG"],
+		extensions: ["tex2jax.js", "asciimath2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js"],
 		});
 	</script>
 
 	<!-- Asynchronous scripts -->
-	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=default"
-		integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+	<script async src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js"></script>
 	<script async src="https://cdn.jsdelivr.net/npm/downloadjs@1.4.7/download.min.js"
 		integrity="sha256-jO7zIwKMJTUQkptQfQMhu+uL4erqSzAd0wUfueDCuNI=" crossorigin="anonymous"></script>
 	<script async src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.js"
 		integrity="sha256-P8jY+MCe6X2cjNSmF4rQvZIanL5VwUUT4MBnOMncjRU=" crossorigin="anonymous"></script>
+	<!--script async src="https://cdn.jsdelivr.net/npm/zepto@1.2.0/dist/zepto.min.js" integrity="sha256-vrn14y7WH7zgEElyQqm2uCGSQrX/xjYDjniRUQx3NyU=" crossorigin="anonymous"></script-->
 
 	<!-- Synchronous scripts -->
 	<script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"
@@ -42,12 +45,22 @@
 <body>
 	<div id="app">
 		<h1>MathJax Viewer</h1>
-		<div class="flex one two-800" id="Main">
+		<div class="flex one three-800" id="Main">
 			<div>
 				<div class="hstack" style="width:100%;">
 					<label class="button gray render" style="width:30%" for="toolboxSelect">Toolbox:
 					</label><select id="toolboxSelect" style="width:70%" v-model="toolbox">
 						<option v-for="tbx, id in groupedtoolboxes" v-bind:value="id">{{ tbx.name }}</option>
+					</select>
+				</div>
+			</div>
+			<div>
+				<div class="hstack" style="width:100%;margin-bottom:3px;">
+					<label class="button gray render" style="width:30%" for="inputSelect">Input:
+					</label><select id="inputSelect" style="width:70%" v-model="mathInput" @change="render">
+						<option value="TeX">LaTeX</option>
+						<option value="AsciiMath">AsciiMath</option>
+						<!--option value="quill" disabled>MathQuill</option-->
 					</select>
 				</div>
 			</div>
@@ -83,7 +96,7 @@
 			<div class="hstack adder" v-for="tbx, id in groupedtoolboxes" v-if="toolbox===id">
 				<span class="button gray">Add
 				</span><span class="button" v-for="tool in tbx.items"
-					v-on:click="insertLaTeX(tool.insertion, tool.offset)"
+					v-on:click="insertMath(tool)"
 					v-bind:class="{pink: tool.color===1, navy: tool.color===2}">{{ tool.icon }}
 				</span>
 			</div>
@@ -91,7 +104,7 @@
 
 		<div class="flex one two-800" id="InputArea">
 			<div>
-				<textarea autofocus class="render" placeholder="LaTeX" v-on:keyup="inputCallback" v-model="inputty"
+				<textarea autofocus class="render" v-bind:placeholder="(mathInput=='AsciiMath') ? 'AsciiMath':'LaTeX'" v-on:keyup="inputCallback" v-model="inputty"
 					id="inputty"></textarea>
 			</div>
 			<div style="min-width: 50%; width: auto;">
@@ -109,12 +122,12 @@
 						showCheatSheet ? "Hide":"Show" }}</span>
 				</div>
 				<div class="hstack adder">
-					<span class="button gray">⭳
-					</span><button v-on:click="downloadSVG" class="navy">SVG
-					</button><button v-on:click="downloadPNG" class="navy">PNG
-					</button>
-					<!--button disabled 
-						onclick="clipboard(event)">📋</button-->
+					<button class="navy" @click="renderSVG(function(data) {download(data, 'MathJax.svg', 'image/svg+xml')})">SVG
+					</button><span class="button gray">&#11123;
+					</span><button class="navy" @click="renderPNG(function(data) {download(data, 'MathJax.png', 'image/png')})">PNG
+					</button><button class="navy" @click="renderPNG(function(data) {window.open(data)})">&#8599;
+					</button><!--button onclick="clipboardPNG(event)">&#128203;
+					</button-->
 				</div>
 				<button onclick="linkToClipboard(event)" class="pink">Copy link</button>
 				<div class="hstack" v-on:click="autorender=!autorender">
@@ -280,6 +293,7 @@
 					<li>Use <code>\left(</code> and <code>\right)</code> to resize parenthesis around a fraction.
 					</li>
 					<li>Use <code>\\</code> to get a new line.</li>
+					<li>AsciiMath supports basic LaTeX, but more complex commands will not work.</li>
 				</ul>
 			</div>
 			<div>
@@ -292,7 +306,8 @@
 									Main Functions</a></li>
 							<li><a target="blank_"
 									href="https://en.wikibooks.org/wiki/LaTeX/Mathematics">LaTeX/Mathematics</a>
-								on WikiBooks.</li>
+								on WikiBooks</li>
+								<li><a target="blank_" href="http://asciimath.org/">AsciiMath reference</a></li>
 						</ul>
 					</li>
 					<li>OCR (handwriting recognition)

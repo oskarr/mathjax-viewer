@@ -6,7 +6,7 @@ code {
     background-color: #383838;
 }
 
-.button.gray {
+.button.gray, button.gray {
     color: #eee;
     background-color: #555;
 }
@@ -16,7 +16,7 @@ code {
 .button.red, button.red {background-color: #773333;}
 .button.orange, button.orange {background-color: #A8642B;}
 .button.pink, button.pink {background-color: #783465;}
-.button.purple, button.purple {background-color: #4A2FC2;}
+.button.purple, button.purple {background-color: #504488;}
 .button.navy, button.navy {background-color: #254E79;}
 .button.yellow, button.yellow {background-color: #ABB82C;}
 
